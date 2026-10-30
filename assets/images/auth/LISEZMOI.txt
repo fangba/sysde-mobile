@@ -1,0 +1,3 @@
+saignee.png : illustration d'hévéa (saignée) tirée de saignee-hevea_901275-64641.avif.
+Fond blanc retiré : seules les formes restent, en vert très foncé translucide,
+pour servir de filigrane sur le dégradé de l'écran d'accueil.

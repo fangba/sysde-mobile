@@ -1,0 +1,4 @@
+Montserrat (SIL Open Font License) : polices variables fournies par le client.
+Montserrat-VariableFont_wght.ttf        : romain, graisses 100 a 900
+Montserrat-Italic-VariableFont_wght.ttf : italique, graisses 100 a 900
+Declarees dans pubspec.yaml (famille "Montserrat"), utilisees par ThemeData.

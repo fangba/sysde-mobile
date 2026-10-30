@@ -1,0 +1,56 @@
+name: sysde_mobile
+description: SysDE Mobile - application terrain hors ligne pour l'encadrement technique de l'hevea.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.5.0
+
+# "any" est provisoire : apres `flutter pub get`, lancer
+# `flutter pub upgrade --major-versions` pour figer des versions precises.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  flutter_riverpod: any
+  go_router: any
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/carousel/
+    - assets/images/auth/
+
+  # Montserrat (police variable, axe wght 100 a 900). Le meme fichier est
+  # declare pour chaque graisse utilisee : Flutter regle l'axe selon fontWeight.
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
+          weight: 400
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
+          weight: 500
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
+          weight: 600
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
+          weight: 700
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
+          weight: 800
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
+          weight: 900
+        - asset: assets/fonts/Montserrat-Italic-VariableFont_wght.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Montserrat-Italic-VariableFont_wght.ttf
+          weight: 700
+          style: italic

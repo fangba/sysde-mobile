@@ -1,0 +1,2 @@
+app_icon.png : logo SysDE (source des icones de l'application).
+Les icones Android (mipmap-*/ic_launcher.png) en sont derivees : 48, 72, 96, 144, 192 px.
