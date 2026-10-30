@@ -51,3 +51,4 @@ Références : `claude/mobile-reference-back.md`, `claude/endpoints-back.md`, `c
 
 Dépose tes photos dans `assets/images/carousel/` sous les noms `saignee.jpg`, `plantation.jpg` et `rencontre.jpg` (format paysage, 1280 px de large suffit, moins de 300 Ko chacune). Tant qu'elles sont absentes, un fond vert avec une icône s'affiche à la place. Pour changer la liste, modifier `defaultCarouselSlides` dans `lib/features/planning/activity_carousel.dart`.
 # sysde-mobile
+# sysde-mobile
