@@ -7,7 +7,9 @@ import '../../core/theme/tokens.dart';
 import '../../data/demo_data.dart';
 import '../../domain/control.dart';
 import '../../domain/participant.dart';
-import 'control_labels.dart';
+import '../../domain/visit_type.dart';
+import 'conformity_notes_page.dart';
+import 'evaluation_panel.dart';
 import 'control_provider.dart';
 import 'photo_sheet_page.dart';
 import 'subject_labels.dart';
@@ -31,6 +33,11 @@ class _ParticipantsPageState extends ConsumerState<ParticipantsPage> {
   @override
   Widget build(BuildContext context) {
     final id = widget.activityId;
+    // Visite de conformite : previsualisation des notes, sans saisie.
+    final current = ref.watch(activitiesProvider).where((a) => a.id == id).firstOrNull;
+    if (current?.visitType == VisitType.conformity) {
+      return ConformityNotesPage(activity: current!);
+    }
     final people = ref.watch(participantsProvider(id));
     final controls = ref.watch(controlsProvider);
     final t = context.tokens;
@@ -191,7 +198,7 @@ class _ParticipantTile extends StatelessWidget {
           curve: Curves.easeOut,
           alignment: Alignment.topCenter,
           child: open
-              ? _Evaluation(control: control, onAttendance: onAttendance, onRate: onRate)
+              ? EvaluationPanel(control: control, onAttendance: onAttendance, onRate: onRate)
               : const SizedBox(width: double.infinity),
         ),
       ],
@@ -230,131 +237,6 @@ class _StatusText extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _Evaluation extends StatelessWidget {
-  const _Evaluation({
-    required this.control,
-    required this.onAttendance,
-    required this.onRate,
-  });
-
-  final ParticipantControl control;
-  final ValueChanged<Attendance> onAttendance;
-  final void Function(Criterion, Rating) onRate;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.tokens;
-    final present = control.attendance == Attendance.present;
-    return Container(
-      width: double.infinity,
-      color: t.okBg.withValues(alpha: 0.35),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(S.attendanceQuestion, style: TextStyle(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: _Choice(
-                  label: S.attPresent,
-                  color: t.okFg,
-                  selected: control.attendance == Attendance.present,
-                  onTap: () => onAttendance(Attendance.present),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _Choice(
-                  label: S.attAbsent,
-                  color: t.dangerFg,
-                  selected: control.attendance == Attendance.absent,
-                  onTap: () => onAttendance(Attendance.absent),
-                ),
-              ),
-            ],
-          ),
-          if (present)
-            for (final c in Criterion.values) ...[
-              const SizedBox(height: 14),
-              Text(c.label, style: const TextStyle(fontWeight: FontWeight.w700)),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  for (final r in Rating.values) ...[
-                    if (r != Rating.good) const SizedBox(width: 8),
-                    Expanded(
-                      child: _Choice(
-                        label: r.label,
-                        color: switch (r) {
-                          Rating.good => t.okFg,
-                          Rating.average => t.warnFg,
-                          Rating.poor => t.dangerFg,
-                        },
-                        selected: control.ratings[c] == r,
-                        onTap: () => onRate(c, r),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ],
-        ],
-      ),
-    );
-  }
-}
-
-class _Choice extends StatelessWidget {
-  const _Choice({
-    required this.label,
-    required this.color,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final Color color;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(10);
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      child: Material(
-        color: selected ? color : context.scheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: radius,
-          side: BorderSide(color: color, width: 1.5),
-        ),
-        child: InkWell(
-          borderRadius: radius,
-          onTap: onTap,
-          child: ExcludeSemantics(
-            child: SizedBox(
-              height: 44,
-              child: Center(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: selected ? Colors.white : color,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

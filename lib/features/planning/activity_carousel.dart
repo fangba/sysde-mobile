@@ -8,26 +8,27 @@ import '../../core/widgets/sys_widgets.dart';
 
 /// Une diapositive : photo (dans assets/images/carousel/) et legende.
 class CarouselSlide {
-  const CarouselSlide({required this.asset, required this.caption, required this.icon});
+  const CarouselSlide({this.asset, required this.caption, required this.icon});
 
-  final String asset;
+  /// Chemin de l'image ; null = fond degrade avec icone.
+  final String? asset;
   final String caption;
   final IconData icon;
 }
 
 const defaultCarouselSlides = [
   CarouselSlide(
-    asset: 'assets/images/carousel/saignee.jpg',
+    asset: 'assets/images/carousel/formation_saignee.jpg',
     caption: S.carouselTraining,
     icon: Icons.school_outlined,
   ),
   CarouselSlide(
-    asset: 'assets/images/carousel/plantation.jpg',
+    asset: 'assets/images/carousel/visite_plantation.jpg',
     caption: S.carouselVisit,
     icon: Icons.park_outlined,
   ),
   CarouselSlide(
-    asset: 'assets/images/carousel/rencontre.jpg',
+    asset: 'assets/images/carousel/rencontre_technique.jpg',
     caption: S.carouselMeeting,
     icon: Icons.groups_outlined,
   ),
@@ -40,12 +41,13 @@ class ActivityCarousel extends StatefulWidget {
   const ActivityCarousel({
     super.key,
     this.slides = defaultCarouselSlides,
-    this.height = 210,
+    this.height,
     this.autoplay = true,
   });
 
   final List<CarouselSlide> slides;
-  final double height;
+  /// Hauteur fixe ; sinon calculee d'apres le ratio des images (largeur / 1,95 ; images recadrees a ce ratio).
+  final double? height;
   final bool autoplay;
 
   @override
@@ -86,10 +88,19 @@ class _ActivityCarouselState extends State<ActivityCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, c) {
+        final height = widget.height ?? (c.maxWidth / 1.95).clamp(150.0, 270.0);
+        return _buildCarousel(height);
+      },
+    );
+  }
+
+  Widget _buildCarousel(double height) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: SizedBox(
-        height: widget.height,
+        height: height,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -136,33 +147,36 @@ class _Slide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (slide.asset == null) return _SlideFallback(slide: slide);
+    // L'image porte deja son sous-titre : aucun texte n'est ajoute par l'application.
     return Semantics(
       image: true,
       label: slide.caption,
+      child: Image.asset(
+        slide.asset!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        excludeFromSemantics: true,
+        errorBuilder: (context, error, stack) => _SlideFallback(slide: slide),
+      ),
+    );
+  }
+}
+
+class _SlideFallback extends StatelessWidget {
+  const _SlideFallback({required this.slide});
+
+  final CarouselSlide slide;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: brandGradient(context),
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            slide.asset,
-            fit: BoxFit.cover,
-            excludeFromSemantics: true,
-            errorBuilder: (context, error, stack) => DecoratedBox(
-              decoration: brandGradient(context),
-              child: Center(
-                child: Icon(slide.icon, size: 56, color: const Color(0x66FFFFFF)),
-              ),
-            ),
-          ),
-          // Voile sombre pour lire la legende sur n'importe quelle photo.
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: [Color(0x00000000), Color(0x99000000)],
-              ),
-            ),
-          ),
+          Center(child: Icon(slide.icon, size: 56, color: const Color(0x66FFFFFF))),
           Positioned(
             left: 16,
             right: 16,

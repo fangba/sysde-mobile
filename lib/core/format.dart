@@ -49,3 +49,6 @@ String formatLastSync(DateTime? at, DateTime now) {
   if (gap == 1) return 'dernière synchro hier ${_hhmm(at)}';
   return 'dernière synchro le ${formatDay(at)} à ${_hhmm(at)}';
 }
+
+/// "27 octobre à 08:15"
+String formatDayTime(DateTime d) => '${formatDay(d)} à ${_hhmm(d)}';

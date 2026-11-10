@@ -8,6 +8,7 @@ import '../../core/theme/tokens.dart';
 import '../../core/widgets/sys_widgets.dart';
 import '../../data/demo_data.dart';
 import '../../domain/activity.dart';
+import '../../domain/meeting_type.dart';
 import 'photo_sheet_page.dart';
 import 'subject_labels.dart';
 
@@ -85,11 +86,18 @@ class VisitActionsPage extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-              child: _ActionCard(
-                icon: Icons.school,
-                label: S.actionControl,
-                onTap: () => context.push('/action/${a.id}/controle'),
-              ),
+              // Groupe de vulgarisation : liste de presence, pas de controle.
+              child: a.meetingType == MeetingType.outreachGroup
+                  ? _ActionCard(
+                      icon: Icons.fact_check,
+                      label: S.actionAttendance,
+                      onTap: () => context.push('/action/${a.id}/presence'),
+                    )
+                  : _ActionCard(
+                      icon: Icons.school,
+                      label: S.actionControl,
+                      onTap: () => context.push('/action/${a.id}/controle'),
+                    ),
             ),
             const SizedBox(width: 14),
             Expanded(

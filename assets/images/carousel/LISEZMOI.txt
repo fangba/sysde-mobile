@@ -1,1 +1,5 @@
-Photos du carrousel : saignee.jpg, plantation.jpg, rencontre.jpg (voir README).
+Illustrations du carrousel (vert monochrome, 1200 x 630) :
+  saignee.jpg    : Formation a la saignee
+  plantation.jpg : Visite de plantation (sert aussi d'en-tete aux pages Visite)
+  rencontre.jpg  : Rencontre technique
+Elles peuvent etre remplacees par de vraies photos de meme nom.

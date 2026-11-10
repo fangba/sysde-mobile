@@ -63,8 +63,104 @@ abstract final class S {
 
   static const settings = 'Paramètres';
   static const signOut = 'Se déconnecter';
+  static const settingsAccount = 'Compte';
+  static const settingsHelp = 'Aide';
+  static const profile = 'Profil';
+  static const profileInfo = 'Informations';
+  static const profileAssignment = 'Affectation';
+  static const profileDevice = 'Compte et appareil';
+  static const profileMatricule = 'Matricule';
+  static const profileRole = 'Poste';
+  static const profilePhone = 'Téléphone';
+  static const profileEmail = 'E-mail';
+  static const profileOperator = 'Opérateur';
+  static const profileSector = 'Secteur';
+  static const profileLot = 'Lot';
+  static const profileSections = 'Sections';
+  static const profileStatus = 'Statut du compte';
+  static const profileActive = 'Actif';
+  static const profileLastSync = 'Dernière synchronisation';
+  static const profileApp = 'Application';
+  static const statTotal = 'Activités';
+  static const statDone = 'Terminées';
+  static const statTodo = 'À faire';
+  static const dangerZone = 'Zone sensible';
+  static const deactivateAccount = 'Désactiver ce compte';
+  static const deactivateExplain =
+      'Révoque tous les droits de ce profil sur cet appareil. Vous pourrez ensuite '
+      'vous connecter avec un autre profil.';
+  static const deactivateTitle = 'Désactiver ce compte ?';
+  static const deactivateRights = 'Votre session est fermée et vos droits sur cet appareil sont révoqués.';
+  static const deactivateData = 'Les données de ce profil enregistrées sur l\'appareil sont supprimées.';
+  static const deactivateNext = 'Un autre profil pourra ensuite se connecter.';
+  static String deactivateUnsent(int n) =>
+      '$n ${n > 1 ? 'activités terminées ne sont pas envoyées' : 'activité terminée n\'est pas envoyée'} '
+      'au serveur : ${n > 1 ? 'elles seront perdues' : 'elle sera perdue'}. Envoyez-${n > 1 ? 'les' : 'la'} d\'abord.';
+  static const deactivateConfirm = 'Désactiver';
+  static const cancel = 'Annuler';
+  static const accountDeactivated = 'Compte désactivé sur cet appareil.';
+  static const planningUpdate = 'Mise à jour du planning';
+  static const planCurrent = 'Planning en vigueur';
+  static const planYear = 'Planning annuel';
+  static const planLastUpdate = 'Dernière mise à jour';
+  static const planActivities = 'Activités au planning';
+  static const planTip =
+      'La mise à jour récupère les modifications validées par votre chef de secteur. '
+      'Vos données terminées, non envoyées, ne sont pas touchées.';
+  static const planSearch = 'Rechercher les mises à jour';
+  static const planRunning = 'Mise à jour en cours…';
+  static const planStepConnect = 'Connexion au serveur';
+  static const planStepCheck = 'Vérification du planning validé';
+  static const planStepDownload = 'Téléchargement des activités';
+  static const planStepSave = 'Enregistrement sur l\'appareil';
+  static const planUpToDate = 'Planning à jour';
+  static const planChangesTitle = 'Changements reçus';
+  static const planAdded = 'Ajoutées';
+  static const planChanged = 'Modifiées';
+  static const planRemoved = 'Retirées';
+  static const planKindNew = 'Nouveau';
+  static const planKindChanged = 'Modifié';
+  static const planKindRemoved = 'Retiré';
+  static const planNoChange = 'Aucun changement : votre planning était déjà à jour.';
+  static const planFailed = 'Mise à jour impossible';
+  static const planFailedBody = 'Vérifiez votre connexion au réseau puis réessayez. Votre planning actuel est conservé.';
+  static const planRetry = 'Réessayer';
+  static const planDone = 'Terminer';
+  static const planDemo = 'Démonstration : les changements affichés sont simulés.';
+  static String planLastUpdateShort(String when) => 'Dernière mise à jour : $when';
+  static const planningUpdateDesc = 'Récupérer le planning validé depuis le serveur';
+  static const sendData = 'Envoyer les données au serveur';
+  static const about = 'À propos';
+  static const close = 'Fermer';
+  static const aboutDesc = 'Version et informations sur l\'application';
+  static const aboutBody = 'Application mobile d\'encadrement technique de l\'hévéa. '
+      'Elle fonctionne hors ligne et envoie vos données au serveur dès que le réseau revient.';
   static const appVersion = 'Version 0.1.0';
-  static const syncPendingSummary = '4 à envoyer · dernière synchro 17:42';
+  static String sendSummary(int n, String lastSync) =>
+      n == 0 ? 'Rien à envoyer · $lastSync' : '$n à envoyer · $lastSync';
+  static const selectAll = 'Tout sélectionner';
+  static const deselectAll = 'Tout désélectionner';
+  static String sendSelected(int n) => n == 0 ? 'Envoyer la sélection' : 'Envoyer la sélection ($n)';
+  static String selectedOf(int n, int total) =>
+      '$n ${n > 1 ? 'sélectionnées' : 'sélectionnée'} sur $total';
+  static const sendTitle = 'Envoyer les données';
+  static const sendRunning = 'Envoi en cours…';
+  static String sendProgress(int done, int total) => '$done sur $total traitées';
+  static const sendDone = 'Données envoyées';
+  static String sendDoneBody(int n) =>
+      n > 1 ? '$n activités ont été envoyées au serveur.' : '1 activité a été envoyée au serveur.';
+  static const sendPartial = 'Envoi partiel';
+  static String sendPartialBody(int failed) => failed > 1
+      ? '$failed activités n\'ont pas pu être envoyées. Elles restent sur l\'appareil.'
+      : '1 activité n\'a pas pu être envoyée. Elle reste sur l\'appareil.';
+  static const sendRetry = 'Renvoyer les échecs';
+  static const sendAllDone = 'Tout est envoyé';
+  static const sendAllDoneBody = 'Aucune activité terminée n\'attend d\'être envoyée.';
+  static const sendFailed = 'Échec';
+  static const nothingToSend = 'Aucune activité terminée à envoyer.';
+  static const catTrainingPlural = 'Formations';
+  static const catMeetingPlural = 'Rencontres';
+  static const catVisitPlural = 'Visites';
 
   static const statusTodo = 'À faire';
   static const statusInProgress = 'En cours';
@@ -127,6 +223,10 @@ abstract final class S {
   static const endDate = 'Date fin';
   static const actionControl = 'Contrôle';
   static const actionReport = 'Rapport';
+  static const actionAttendance = 'Liste de présence';
+  static const markAllPresent = 'Tout marquer présent';
+  static const saveAttendance = 'Enregistrer la liste';
+  static const attendanceSaved = 'Liste de présence enregistrée sur l\'appareil.';
   static const participants = 'Participants';
   static const noParticipant = 'Aucun participant.';
   static const attPresent = 'Présent';
@@ -134,6 +234,24 @@ abstract final class S {
   static const evaluated = 'évalué';
   static const attPending = 'Non renseigné';
   static const attendanceQuestion = 'Présence';
+  static const evaluationTitle = 'Évaluation';
+  static const conformityNotesTitle = 'Notes des visites de plantation';
+  static const conformityNotesHint =
+      'Notes relevées par le moniteur lors des visites de plantation. Consultation seulement.';
+  static const conformityNoVisit = 'Aucune visite de plantation avec contrôle pour cette plantation.';
+  static const conformityNoNote = 'Aucune note pour ce participant.';
+  static const conformityLastThree = 'Les 3 dernières visites sont affichées.';
+  static const noNote = '—';
+  static const monitorNote = 'Moniteur';
+  static const gapSame = 'identique';
+  static const gapLabel = 'écart';
+  static const overallTitle = 'Note globale';
+  static const verdictCompliant = 'Conforme';
+  static const verdictNonCompliant = 'Non conforme';
+  static const commentLabel = 'Commentaire';
+  static const commentHint = 'Observations sur la conformité du participant';
+  static const commentRequired = 'Commentaire obligatoire si le participant est non conforme.';
+  static const absentNotEvaluated = 'Un participant absent n\'est pas évalué.';
   static const ratingGood = 'Bon';
   static const ratingAverage = 'Moyen';
   static const ratingPoor = 'Mauvais';

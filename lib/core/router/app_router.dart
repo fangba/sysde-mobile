@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,14 +17,16 @@ import '../../features/planning/training_labels.dart';
 import '../../features/planning/subject_labels.dart';
 import '../../features/planning/visit_actions_page.dart';
 import '../../features/planning/visit_hub_page.dart';
+import '../../features/planning/attendance_page.dart';
 import '../../features/planning/participants_page.dart';
 import '../../features/planning/planning_page.dart';
+import '../../features/settings/planning_update_page.dart';
+import '../../features/settings/profile_page.dart';
 import '../../features/settings/settings_page.dart';
 import '../../features/sync/sync_page.dart';
 import '../../domain/meeting_type.dart';
 import '../../domain/training_type.dart';
 import '../../domain/visit_type.dart';
-import '../strings.dart';
 import 'app_shell.dart';
 
 GoRouter buildRouter({String initialLocation = '/'}) {
@@ -53,6 +54,11 @@ GoRouter buildRouter({String initialLocation = '/'}) {
             path: 'controle',
             builder: (context, state) =>
                 ParticipantsPage(activityId: state.pathParameters['id'] ?? ''),
+          ),
+          GoRoute(
+            path: 'presence',
+            builder: (context, state) =>
+                AttendancePage(activityId: state.pathParameters['id'] ?? ''),
           ),
         ],
       ),
@@ -155,14 +161,16 @@ GoRouter buildRouter({String initialLocation = '/'}) {
                 builder: (context, state) => const SettingsPage(),
                 routes: [
                   GoRoute(
+                    path: 'planning',
+                    builder: (context, state) => const PlanningUpdatePage(),
+                  ),
+                  GoRoute(
+                    path: 'profil',
+                    builder: (context, state) => const ProfilePage(),
+                  ),
+                  GoRoute(
                     path: 'synchro',
-                    builder: (context, state) => Scaffold(
-                      appBar: AppBar(
-                        title: const Text(S.sync),
-                        leading: BackButton(onPressed: () => context.pop()),
-                      ),
-                      body: const SyncPage(),
-                    ),
+                    builder: (context, state) => const SyncPage(),
                   ),
                 ],
               ),

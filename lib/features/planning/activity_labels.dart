@@ -12,6 +12,13 @@ extension ActivityCategoryX on ActivityCategory {
         ActivityCategory.meeting => S.catMeeting,
       };
 
+  /// Meme icone que sur l'accueil (Formations, Rencontres, Visites).
+  IconData get icon => switch (this) {
+        ActivityCategory.training => Icons.school_outlined,
+        ActivityCategory.meeting => Icons.groups_outlined,
+        ActivityCategory.visit => Icons.assignment_outlined,
+      };
+
   Color color(SysdeTokens t) => switch (this) {
         ActivityCategory.visit => t.visit,
         ActivityCategory.training => t.training,

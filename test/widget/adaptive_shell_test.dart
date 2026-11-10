@@ -171,14 +171,19 @@ void main() {
     await tester.tap(find.text('Présent'));
     await tester.pumpAndSettle();
     for (final c in ['Consommation', 'Profondeur', 'Pente', 'Blessures', 'Propreté']) {
+      await tester.scrollUntilVisible(find.text(c), 120, scrollable: find.byType(Scrollable).first);
       expect(find.text(c), findsOneWidget);
     }
+    await tester.scrollUntilVisible(find.text('Consommation'), -120,
+        scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Bon').first);
     await tester.pumpAndSettle();
     expect(find.text('Présent · 1/5'), findsOneWidget);
     expect(find.text('1 présent · 0 absent · 2 à renseigner'), findsOneWidget);
 
     // Un absent n'est pas evalue : les criteres disparaissent.
+    await tester.ensureVisible(find.text('Absent'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Absent'));
     await tester.pumpAndSettle();
     expect(find.text('Consommation'), findsNothing);

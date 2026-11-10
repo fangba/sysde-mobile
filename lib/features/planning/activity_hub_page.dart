@@ -52,7 +52,7 @@ class ActivityHubPage extends ConsumerWidget {
                   style: context.text.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 16),
-                ActivityCarousel(height: wide ? 290 : 215),
+                const ActivityCarousel(),
                 const SizedBox(height: 16),
                 if (wide)
                   LayoutBuilder(

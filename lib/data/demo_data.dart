@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/activity.dart';
+import '../domain/control.dart';
 import '../domain/meeting_type.dart';
 import '../domain/plan_status.dart';
 import '../domain/participant.dart';
@@ -334,12 +335,78 @@ class SelectedActivity extends Notifier<String?> {
 /// planteur de la base externe).
 final participantsProvider = Provider.family<List<Participant>, String>((ref, activityId) {
   final activity = ref.watch(activitiesProvider).where((a) => a.id == activityId);
-  if (activity.isEmpty || activity.first.category != ActivityCategory.visit) {
-    return const [];
+  if (activity.isEmpty) return const [];
+  final a = activity.first;
+  // Groupe de vulgarisation : membres du groupe (liste de presence).
+  if (a.meetingType == MeetingType.outreachGroup) {
+    return const [
+      Participant(id: 'g1', name: 'KOUAME Lisette', role: ParticipantRole.planter, phone: '78-98-89-98'),
+      Participant(id: 'g2', name: 'ADJOUA Brigitte', role: ParticipantRole.planter, phone: '78-12-45-60'),
+      Participant(id: 'g3', name: 'YAO Konan', role: ParticipantRole.planter, phone: '78-33-21-87'),
+      Participant(id: 'g4', name: 'TOURE Mamadou', role: ParticipantRole.planter, phone: '78-54-09-12'),
+      Participant(id: 'g5', name: 'BROU Akissi', role: ParticipantRole.planter, phone: '78-71-66-30'),
+      Participant(id: 'g6', name: 'N DRI Jean-Marc', role: ParticipantRole.planter, phone: '78-45-18-92'),
+    ];
   }
+  if (a.category != ActivityCategory.visit) return const [];
   return const [
     Participant(id: 'p1', name: 'N GUESSAN Valentin', role: ParticipantRole.tapper, phone: '78-85-55-58'),
     Participant(id: 'p2', name: 'TANOH YVES', role: ParticipantRole.tapper, phone: '78-96-36-96'),
     Participant(id: 'p3', name: 'KOUAME Lisette', role: ParticipantRole.planter, phone: '78-98-89-98'),
   ];
 });
+
+/// Notes de visites de plantation passees (demonstration), par plantation.
+/// Avec le back, elles viendront des controles envoyes par le moniteur.
+final demoVisitNotes = <String, List<VisitNotes>>{
+  'Zadi Gnagne': [
+    VisitNotes(
+      rank: 1,
+      date: DateTime(2026, 8, 20),
+      byParticipant: const {
+        'p1': ParticipantControl(attendance: Attendance.present, ratings: {
+          Criterion.consumption: Rating.average,
+          Criterion.depth: Rating.poor,
+          Criterion.slope: Rating.average,
+          Criterion.wounds: Rating.poor,
+          Criterion.cleanliness: Rating.average,
+        }),
+        'p2': ParticipantControl(attendance: Attendance.present, ratings: {
+          Criterion.consumption: Rating.good,
+          Criterion.depth: Rating.average,
+          Criterion.slope: Rating.good,
+          Criterion.wounds: Rating.average,
+          Criterion.cleanliness: Rating.good,
+        }),
+        'p3': ParticipantControl(attendance: Attendance.absent),
+      },
+    ),
+    VisitNotes(
+      rank: 2,
+      date: DateTime(2026, 9, 24),
+      byParticipant: const {
+        'p1': ParticipantControl(attendance: Attendance.present, ratings: {
+          Criterion.consumption: Rating.good,
+          Criterion.depth: Rating.average,
+          Criterion.slope: Rating.average,
+          Criterion.wounds: Rating.average,
+          Criterion.cleanliness: Rating.good,
+        }),
+        'p2': ParticipantControl(attendance: Attendance.present, ratings: {
+          Criterion.consumption: Rating.good,
+          Criterion.depth: Rating.good,
+          Criterion.slope: Rating.good,
+          Criterion.wounds: Rating.good,
+          Criterion.cleanliness: Rating.good,
+        }),
+        'p3': ParticipantControl(attendance: Attendance.present, ratings: {
+          Criterion.consumption: Rating.average,
+          Criterion.depth: Rating.average,
+          Criterion.slope: Rating.poor,
+          Criterion.wounds: Rating.average,
+          Criterion.cleanliness: Rating.average,
+        }),
+      },
+    ),
+  ],
+};
