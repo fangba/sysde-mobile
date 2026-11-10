@@ -84,6 +84,8 @@ abstract final class S {
   static const profileActive = 'Actif';
   static const profileLastSync = 'Dernière synchronisation';
   static const profileApp = 'Application';
+  static const groupTotal = 'Total';
+  static const noActivityHere = 'Aucune activité';
   static const statTotal = 'Activités';
   static const statDone = 'Terminées';
   static const statTodo = 'À faire';
@@ -289,7 +291,7 @@ abstract final class S {
   static const meetingFair = 'Foire aux régisseurs';
   static const trainingInitial = 'Formation initiale';
   static const trainingInSitu = 'Perfectionnement in situ';
-  static const trainingPostControl = 'Contrôle post perfectionnement';
+  static const trainingPostControl = 'Suivi post perfectionnement';
   static const trainingRecycling = 'Recyclage des saigneurs';
   static const carouselTraining = 'Formation à la saignée';
   static const carouselVisit = 'Visite de plantation';

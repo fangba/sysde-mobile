@@ -21,6 +21,7 @@ class VisitHubPage extends ConsumerWidget {
         if (a.category == ActivityCategory.visit) a,
     ];
     return ActivityGroupPage(
+      lightCards: true,
       title: S.sectionVisit,
       subtitle: S.chooseVisitType,
       icon: ActivitySection.visit.icon,

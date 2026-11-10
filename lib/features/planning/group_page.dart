@@ -34,6 +34,7 @@ class ActivityGroupPage extends StatelessWidget {
     required this.pending,
     required this.done,
     required this.entries,
+    this.lightCards = false,
   });
 
   final String title;
@@ -42,6 +43,9 @@ class ActivityGroupPage extends StatelessWidget {
   final int pending;
   final int done;
   final List<GroupEntry> entries;
+
+  /// Cartes blanches a tuile verte (formation) au lieu de cartes vertes.
+  final bool lightCards;
 
   static const _maxWidth = 720.0;
   static const _overlap = 40.0;
@@ -82,6 +86,7 @@ class ActivityGroupPage extends StatelessWidget {
                         icon: e.icon,
                         title: e.title,
                         uppercase: false,
+                        light: lightCards,
                         description: e.description,
                         onTap: () => context.go(e.path),
                       ),
@@ -115,7 +120,7 @@ class _Header extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 64),
+          padding: const EdgeInsets.fromLTRB(8, 12, 8, 84),
           child: Column(
             children: [
               // Le bouton reste colle au bord gauche de l'ecran, meme sur tablette.
@@ -182,8 +187,12 @@ class _SummaryCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.scheme.surface,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(color: Color(0x1F0E1A14), blurRadius: 20, offset: Offset(0, 6)),
+            boxShadow: [
+              BoxShadow(
+                color: t.deep.withValues(alpha: 0.12),
+                blurRadius: 20,
+                offset: const Offset(0, 6),
+              ),
             ],
           ),
           child: Row(

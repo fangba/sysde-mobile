@@ -22,6 +22,7 @@ class MeetingHubPage extends ConsumerWidget {
     ];
     final count = countActivities(meetings);
     return ActivityGroupPage(
+      lightCards: true,
       title: S.sectionMeeting,
       subtitle: S.chooseMeetingType,
       icon: ActivitySection.meeting.icon,

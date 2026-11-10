@@ -20,6 +20,7 @@ class TrainingHubPage extends ConsumerWidget {
         if (a.category == ActivityCategory.training) a,
     ];
     return ActivityGroupPage(
+      lightCards: true,
       title: S.sectionTraining,
       subtitle: S.chooseTrainingType,
       icon: ActivitySection.training.icon,

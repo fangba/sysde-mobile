@@ -80,7 +80,7 @@ void main() {
     for (final t in [
       'Formation initiale',
       'Perfectionnement in situ',
-      'Contrôle post perfectionnement',
+      'Suivi post perfectionnement',
       'Recyclage des saigneurs',
     ]) {
       expect(find.text(t), findsOneWidget);
@@ -339,6 +339,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('VISITE DE PLANTATION'));
     await tester.tap(find.text('VISITE DE PLANTATION'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Découverte du verger'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Découverte du verger'));
     await tester.pumpAndSettle();

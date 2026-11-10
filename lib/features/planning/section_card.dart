@@ -13,12 +13,16 @@ class SectionCard extends StatelessWidget {
     required this.onTap,
     this.description,
     this.uppercase = true,
+    this.light = false,
   });
 
   final IconData icon;
   final String title;
   final String? description;
   final bool uppercase;
+
+  /// Carte blanche, tuile d'icone verte (au lieu de carte verte, tuile blanche).
+  final bool light;
   final VoidCallback onTap;
 
   @override
@@ -31,7 +35,20 @@ class SectionCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: Ink(
-          decoration: brandGradient(context, radius: radius),
+          decoration: light
+              ? BoxDecoration(
+                  color: context.scheme.surface,
+                  borderRadius: radius,
+                  border: Border.all(color: context.tokens.line),
+                  boxShadow: [
+                    BoxShadow(
+                      color: context.tokens.deep.withValues(alpha: 0.08),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                )
+              : brandGradient(context, radius: radius),
           child: InkWell(
             borderRadius: radius,
             onTap: onTap,
@@ -43,11 +60,13 @@ class SectionCard extends StatelessWidget {
                     Container(
                       width: 64,
                       height: 64,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Icon(icon, size: 34, color: context.scheme.primary),
+                      decoration: light
+                          ? brandGradient(context, radius: BorderRadius.circular(16))
+                          : BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                      child: Icon(icon, size: 34, color: light ? Colors.white : context.scheme.primary),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -56,8 +75,8 @@ class SectionCard extends StatelessWidget {
                         children: [
                           Text(
                             uppercase ? title.toUpperCase() : title,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: light ? context.scheme.primary : Colors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.3,
@@ -67,13 +86,16 @@ class SectionCard extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               desc,
-                              style: const TextStyle(color: Colors.white, fontSize: 13.5),
+                              style: TextStyle(
+                                color: light ? context.tokens.inkMuted : Colors.white,
+                                fontSize: 13.5,
+                              ),
                             ),
                           ],
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: Colors.white),
+                    Icon(Icons.chevron_right, color: light ? context.tokens.inkMuted : Colors.white),
                   ],
                 ),
               ),
