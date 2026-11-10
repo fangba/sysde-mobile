@@ -41,7 +41,6 @@ abstract final class S {
   static const hubTrainingSub = 'Contenu des activités de formation';
   static const hubMeetingSub = 'Contenu des activités de rencontre';
   static const hubVisitSub = 'Contenu des activités de visite';
-  static const activitiesSubtitle = 'Vos formations, visites et rencontres';
   static const noActivitySelected = 'Sélectionnez une activité';
   static const activity = 'Activité';
   static const positionSaved = 'Position enregistrée';

@@ -17,7 +17,6 @@ class ActivityHubPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wide = !context.isCompact;
-    final t = context.tokens;
 
     void open(ActivitySection s) => context.go(s.path);
 
@@ -48,11 +47,6 @@ class ActivityHubPage extends StatelessWidget {
                 Text(
                   S.activities,
                   style: context.text.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  S.activitiesSubtitle,
-                  style: TextStyle(fontSize: 13, color: t.inkMuted),
                 ),
                 const SizedBox(height: 16),
                 const ActivityCarousel(),
