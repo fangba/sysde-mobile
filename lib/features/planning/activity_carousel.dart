@@ -46,7 +46,7 @@ class ActivityCarousel extends StatefulWidget {
   });
 
   final List<CarouselSlide> slides;
-  /// Hauteur fixe ; sinon calculee d'apres le ratio des images (largeur / 1,95 ; images recadrees a ce ratio).
+  /// Hauteur fixe ; sinon calculee d'apres le ratio des images (largeur / 2,25 ; images recadrees a ce ratio).
   final double? height;
   final bool autoplay;
 
@@ -90,7 +90,7 @@ class _ActivityCarouselState extends State<ActivityCarousel> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, c) {
-        final height = widget.height ?? (c.maxWidth / 1.95).clamp(150.0, 270.0);
+        final height = widget.height ?? (c.maxWidth / 2.25).clamp(130.0, 230.0);
         return _buildCarousel(height);
       },
     );
