@@ -32,31 +32,35 @@ class HomePage extends ConsumerWidget {
     final wide = !context.isCompact;
     const gap = SizedBox(height: 16);
 
-    return SingleChildScrollView(
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1100),
-          child: Padding(
-            padding: EdgeInsets.all(wide ? 32 : 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const HomeHeader(),
-                const SizedBox(height: 20),
-                if (wide)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(flex: 13, child: Column(children: [progress, gap, categories])),
-                      const SizedBox(width: 24),
-                      Expanded(flex: 10, child: attentionCard),
-                    ],
-                  )
-                else
-                  Column(children: [progress, gap, categories, gap, attentionCard]),
-              ],
+    final pad = wide ? 32.0 : 16.0;
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1100),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // En-tete fixe : seul le contenu en dessous defile.
+            Padding(
+              padding: EdgeInsets.fromLTRB(pad, pad, pad, 12),
+              child: const HomeHeader(),
             ),
-          ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(pad, 8, pad, pad),
+                child: wide
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(flex: 13, child: Column(children: [progress, gap, categories])),
+                          const SizedBox(width: 24),
+                          Expanded(flex: 10, child: attentionCard),
+                        ],
+                      )
+                    : Column(children: [progress, gap, categories, gap, attentionCard]),
+              ),
+            ),
+          ],
         ),
       ),
     );
