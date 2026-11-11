@@ -74,15 +74,18 @@ List<String> distinctValues(Iterable<String?> values) =>
 List<SubjectGroup> groupBySession(
   Iterable<Activity> sessions, {
   String? section,
+  String? lot,
   String query = '',
   String? yearlyName,
+  String nameWord = 'Session',
 }) {
-  String nameOf(DateTime d) => yearlyName ?? formatSessionName(d);
+  String nameOf(DateTime d) => yearlyName ?? formatSessionName(d, word: nameWord);
   (int, int) keyOf(DateTime d) => (d.year, yearlyName == null ? d.month : 0);
   final needle = normalizeForSearch(query);
   final byMonth = <(int, int), List<Activity>>{};
   for (final a in sessions) {
     if (section != null && a.section != section) continue;
+    if (lot != null && a.lot != lot) continue;
     if (needle.isNotEmpty && !normalizeForSearch(nameOf(a.date)).contains(needle)) {
       continue;
     }

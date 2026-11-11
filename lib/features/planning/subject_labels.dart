@@ -21,6 +21,8 @@ class SubjectLabels {
     this.yearlySessionName,
     this.searchName,
     this.stickyFilters = true,
+    this.showEndDate = false,
+    this.monthCardWord = 'Session',
   });
 
   /// Devant le nom du sujet, en majuscules : « PLANTATION », « SAIGNEUR »...
@@ -61,6 +63,12 @@ class SubjectLabels {
   /// Titre, listes de choix et recherche restent figes : seule la liste defile.
   final bool stickyFilters;
 
+  /// Affiche « Date de fin » sous la date de chaque ligne.
+  final bool showEndDate;
+
+  /// Mot qui precede le mois sur la carte (« Session » ou « Perfectionnement »).
+  final String monthCardWord;
+
   String get _sectionCap => '${sectionWord[0].toUpperCase()}${sectionWord.substring(1)}';
   String get sectionField => '$_sectionCap :';
   String get chooseSection => 'Choisir ${sectionFeminine ? 'une' : 'un'} $sectionWord';
@@ -93,23 +101,24 @@ const trainingLabels = SubjectLabels(
 /// Formation initiale : les saigneurs sont regroupes par lot, pas par section.
 const initialTrainingLabels = SubjectLabels(
   prefix: 'SAIGNEUR',
-  single: 'session',
-  plural: 'sessions',
+  single: 'formation',
+  plural: 'formations',
   masculine: false,
-  item: _formationSession,
+  item: _session,
   doneLabel: S.sessionDone,
   typeIconOnHint: true,
   sectionWord: 'lot',
   sectionFeminine: false,
   pickTarget: 'les sessions de formation',
   sessionCards: true,
+  monthCardWord: 'Formation',
 );
 
 /// Suivi post perfectionnement : meme regroupement par lot.
 const postControlTrainingLabels = SubjectLabels(
   prefix: 'SAIGNEUR',
-  single: 'saigneur',
-  plural: 'saigneurs',
+  single: 'suivi',
+  plural: 'suivis',
   masculine: true,
   item: _session,
   doneLabel: S.sessionDone,
@@ -117,15 +126,31 @@ const postControlTrainingLabels = SubjectLabels(
   sectionWord: 'lot',
   sectionFeminine: false,
   lotThenSection: true,
+  sessionCards: true,
+  monthCardWord: 'Suivi',
+);
+
+/// Perfectionnement in situ : une carte par mois (« PERFECTIONNEMENT OCTOBRE »), qui
+/// peut contenir jusqu'a 3 dates.
+const inSituTrainingLabels = SubjectLabels(
+  prefix: 'SAIGNEUR',
+  single: 'perfectionnement',
+  plural: 'perfectionnements',
+  masculine: true,
+  item: _session,
+  doneLabel: S.sessionDone,
+  typeIconOnHint: true,
+  sessionCards: true,
+  monthCardWord: 'Perfectionnement',
 );
 
 /// Recyclage des saigneurs : les saigneurs sont regroupes par lot.
 const recyclingTrainingLabels = SubjectLabels(
   prefix: 'SAIGNEUR',
-  single: 'session',
-  plural: 'sessions',
-  masculine: false,
-  item: _recyclingSession,
+  single: 'recyclage',
+  plural: 'recyclages',
+  masculine: true,
+  item: _session,
   doneLabel: S.sessionDone,
   typeIconOnHint: true,
   sectionWord: 'lot',
@@ -139,7 +164,7 @@ SubjectLabels trainingLabelsFor(TrainingType type) => switch (type) {
       TrainingType.initial => initialTrainingLabels,
       TrainingType.postControl => postControlTrainingLabels,
       TrainingType.recycling => recyclingTrainingLabels,
-      _ => trainingLabels,
+      TrainingType.inSitu => inSituTrainingLabels,
     };
 
 const meetingLabels = SubjectLabels(
@@ -152,8 +177,6 @@ const meetingLabels = SubjectLabels(
   typeIconOnHint: true,
 );
 
-String _recyclingSession(int n) => 'Session de recyclage';
-String _formationSession(int n) => 'Session de formation';
 String _session(int n) => 'Session $n';
 /// Conference thematique : les groupes sont regroupes par lot.
 const conferenceLabels = SubjectLabels(

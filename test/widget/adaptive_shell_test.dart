@@ -100,10 +100,10 @@ void main() {
     await tester.pumpAndSettle();
 
     // Une carte par session, chacune avec une seule session.
-    expect(find.text('Rechercher une session'), findsOneWidget);
-    expect(find.text('2 sessions'), findsOneWidget);
-    expect(find.text('Session Septembre'), findsOneWidget);
-    expect(find.text('Session Octobre'), findsOneWidget);
+    expect(find.text('Rechercher une formation'), findsOneWidget);
+    expect(find.text('2 formations'), findsOneWidget);
+    expect(find.text('FORMATION SEPTEMBRE'), findsOneWidget);
+    expect(find.text('FORMATION OCTOBRE'), findsOneWidget);
     expect(find.text('SAIGNEUR KOUAMÉ JEAN'), findsNothing);
   });
 

@@ -106,8 +106,10 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
                 ? groupBySession(
                     visits,
                     section: section,
+                    lot: twoLevel ? lot : null,
                     query: _search.text,
                     yearlyName: widget.labels.yearlySessionName,
+                    nameWord: widget.labels.monthCardWord,
                   )
                 : groupBySubject(
                     visits,
@@ -372,7 +374,7 @@ class _SubjectTile extends StatelessWidget {
     final t = context.tokens;
     final percent = (group.rate * 100).round();
     final name =
-        labels.sessionCards ? group.name : '${labels.prefix} ${group.name.toUpperCase()}'.trim();
+        labels.sessionCards ? group.name.toUpperCase() : '${labels.prefix} ${group.name.toUpperCase()}'.trim();
     return SysCard(
       padding: EdgeInsets.zero,
       child: ClipRRect(
@@ -510,7 +512,7 @@ class _ActivityRow extends StatelessWidget {
                           labels.item(visit.rank ?? 1),
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                         ),
-                        if (end != null) ...[
+                        if (end != null && labels.showEndDate) ...[
                           const SizedBox(height: 2),
                           Text(
                             '${S.endDate} : ${formatLongDate(end)}',
