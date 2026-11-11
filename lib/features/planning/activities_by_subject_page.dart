@@ -467,12 +467,12 @@ class _ActivityRow extends StatelessWidget {
     final t = context.tokens;
     final done = visit.status == ActivityStatus.done;
     final late = isLate(done: done, plannedOn: visit.date, today: today);
-    final (statusLabel, statusColor, statusIcon) = switch (visit.status) {
-      ActivityStatus.done => (labels.doneLabel, t.okFg, Icons.check_circle_outline),
-      ActivityStatus.inProgress => (S.statusInProgress, t.warnFg, Icons.timelapse),
-      ActivityStatus.todo when late => (S.lateLabel, t.dangerFg, Icons.error_outline),
-      ActivityStatus.todo => (S.statusTodo, t.inkMuted, Icons.schedule),
-    };
+    // Fait, sinon En retard (date passee), sinon A faire (y compris en cours).
+    final (statusLabel, statusColor, statusIcon) = done
+        ? (labels.doneLabel, t.okFg, Icons.check_circle_outline)
+        : late
+            ? (S.lateLabel, t.dangerFg, Icons.error_outline)
+            : (labels.pendingLabel, t.inkMuted, Icons.schedule);
     final end = visit.lastDay;
     return Semantics(
       button: true,

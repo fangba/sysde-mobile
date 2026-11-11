@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/clock.dart';
 import '../../core/strings.dart';
 import '../../data/demo_data.dart';
 import '../../domain/activity.dart';
@@ -16,23 +17,26 @@ class VisitHubPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final today = ref.watch(clockProvider)();
     final visits = [
       for (final a in ref.watch(activitiesProvider))
         if (a.category == ActivityCategory.visit) a,
     ];
+    final count = countActivities(visits, today);
     return ActivityGroupPage(
       lightCards: true,
       title: S.sectionVisit,
       subtitle: S.chooseVisitType,
       icon: ActivitySection.visit.icon,
-      pending: countActivities(visits).pending,
-      done: countActivities(visits).done,
+      pending: count.pending,
+      late: count.late,
+      done: count.done,
       entries: [
         for (final type in VisitType.values)
           GroupEntry(
             icon: type.icon,
             title: type.label,
-            description: describeActivities(visits.where((a) => a.visitType == type)),
+            description: describeActivities(visits.where((a) => a.visitType == type), today),
             path: '/activite/visite/${type.slug}',
           ),
       ],

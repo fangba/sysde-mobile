@@ -274,12 +274,12 @@ abstract final class S {
       '$present ${present > 1 ? 'présents' : 'présent'} · '
       '$absent ${absent > 1 ? 'absents' : 'absent'} · $pending à renseigner';
   static const screenToDefine = 'écran à définir';
-  static const visitDone = 'Visite effectuée';
-  static const sessionDone = 'Session terminée';
-  static const animationDone = 'Animation effectuée';
+  static const visitDone = 'Terminée';
+  static const sessionDone = 'Terminée';
+  static const animationDone = 'Terminée';
   static const expand = 'Déplier';
   static const collapse = 'Replier';
-  static String visitNth(int n) => n == 1 ? '1ère visite' : '${n}e visite';
+  static String visitNth(int n) => 'Visite $n';
   static const chooseTrainingType = 'Choisissez un type de formation';
   static const chooseVisitType = 'Choisissez un type de visite';
   static String activitiesCount(int n) => '$n activité${n > 1 ? 's' : ''}';
@@ -299,8 +299,8 @@ abstract final class S {
   static const carouselTraining = 'Formation à la saignée';
   static const carouselVisit = 'Visite de plantation';
   static const carouselMeeting = 'Rencontre technique';
-  static String pendingAndDone(int pending, int done) =>
-      '$pending en attente · $done terminée${done > 1 ? 's' : ''}';
+  static String pendingAndDone(int pending, int done, {int late = 0}) =>
+      '$pending en attente · $late en retard · $done terminée${done > 1 ? 's' : ''}';
   static const noActivityInFilter = 'Aucune activité ici.';
   static const tabTraining = 'FORMATIONS';
   static const tabMeeting = 'RENCONTRES';

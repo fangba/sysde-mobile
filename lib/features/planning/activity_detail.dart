@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/clock.dart';
 import '../../core/strings.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/sys_widgets.dart';
 import '../../domain/activity.dart';
+import '../../domain/report_rules.dart';
 import 'activity_labels.dart';
 
 /// Fiche d'une activite : position, photos, observations.
@@ -30,7 +33,16 @@ class ActivityDetail extends StatelessWidget {
                   style: context.text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
               ),
-              ActivityStatusPill(status: activity.status),
+              Consumer(
+                builder: (context, ref, _) => ActivityStatusPill(
+                  status: activity.status,
+                  late: isLate(
+                    done: activity.status == ActivityStatus.done,
+                    plannedOn: activity.date,
+                    today: ref.watch(clockProvider)(),
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 4),

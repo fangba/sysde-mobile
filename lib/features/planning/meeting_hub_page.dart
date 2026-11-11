@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/clock.dart';
 import '../../core/strings.dart';
 import '../../data/demo_data.dart';
 import '../../domain/activity.dart';
@@ -16,24 +17,26 @@ class MeetingHubPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final today = ref.watch(clockProvider)();
     final meetings = [
       for (final a in ref.watch(activitiesProvider))
         if (a.category == ActivityCategory.meeting) a,
     ];
-    final count = countActivities(meetings);
+    final count = countActivities(meetings, today);
     return ActivityGroupPage(
       lightCards: true,
       title: S.sectionMeeting,
       subtitle: S.chooseMeetingType,
       icon: ActivitySection.meeting.icon,
       pending: count.pending,
+      late: count.late,
       done: count.done,
       entries: [
         for (final type in MeetingType.values)
           GroupEntry(
             icon: type.icon,
             title: type.label,
-            description: describeActivities(meetings.where((a) => a.meetingType == type)),
+            description: describeActivities(meetings.where((a) => a.meetingType == type), today),
             path: '/activite/rencontre/${type.slug}',
           ),
       ],

@@ -33,6 +33,7 @@ class ActivityGroupPage extends StatelessWidget {
     required this.icon,
     required this.pending,
     required this.done,
+    this.late = 0,
     required this.entries,
     this.lightCards = false,
   });
@@ -41,6 +42,7 @@ class ActivityGroupPage extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final int pending;
+  final int late;
   final int done;
   final List<GroupEntry> entries;
 
@@ -67,7 +69,7 @@ class ActivityGroupPage extends StatelessWidget {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: _maxWidth),
-                    child: _SummaryCard(icon: icon, pending: pending, done: done),
+                    child: _SummaryCard(icon: icon, pending: pending, late: late, done: done),
                   ),
                 ),
               ),
@@ -166,21 +168,27 @@ class _Header extends StatelessWidget {
 
 /// Bilan du groupe : nombre d'activites, en attente / terminees, taux.
 class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({required this.icon, required this.pending, required this.done});
+  const _SummaryCard({
+    required this.icon,
+    required this.pending,
+    required this.late,
+    required this.done,
+  });
 
   final IconData icon;
   final int pending;
+  final int late;
   final int done;
 
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final total = pending + done;
+    final total = pending + late + done;
     final percent = total == 0 ? 0 : (done / total * 100).round();
     return Semantics(
       container: true,
       label:
-          '${S.activitiesCount(total)}, ${S.pendingAndDone(pending, done)}, $percent % effectuées',
+          '${S.activitiesCount(total)}, ${S.pendingAndDone(pending, done, late: late)}, $percent % effectuées',
       child: ExcludeSemantics(
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -217,7 +225,7 @@ class _SummaryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      S.pendingAndDone(pending, done),
+                      S.pendingAndDone(pending, done, late: late),
                       style: TextStyle(fontSize: 13, color: t.inkMuted),
                     ),
                   ],

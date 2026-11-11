@@ -25,7 +25,7 @@ class ActivityTile extends StatelessWidget {
     final color = activity.category.color(t);
     final statusColor = switch (activity.status) {
       ActivityStatus.todo => context.scheme.primary,
-      ActivityStatus.inProgress => t.warnFg,
+      ActivityStatus.inProgress => context.scheme.primary,
       ActivityStatus.done => t.okFg,
     };
     return Semantics(

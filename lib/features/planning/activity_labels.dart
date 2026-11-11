@@ -29,24 +29,27 @@ extension ActivityCategoryX on ActivityCategory {
 extension ActivityStatusX on ActivityStatus {
   String get label => switch (this) {
         ActivityStatus.todo => S.statusTodo,
-        ActivityStatus.inProgress => S.statusInProgress,
+        ActivityStatus.inProgress => S.statusTodo,
         ActivityStatus.done => S.statusDone,
       };
 }
 
 class ActivityStatusPill extends StatelessWidget {
-  const ActivityStatusPill({super.key, required this.status});
+  const ActivityStatusPill({super.key, required this.status, this.late = false});
 
   final ActivityStatus status;
+
+  /// Non realisee et prevue avant aujourd'hui : « En retard ».
+  final bool late;
 
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final (bg, fg) = switch (status) {
-      ActivityStatus.todo => (t.neutralBg, t.neutralFg),
-      ActivityStatus.inProgress => (t.warnBg, t.warnFg),
-      ActivityStatus.done => (t.okBg, t.okFg),
+    final (label, bg, fg) = switch (status) {
+      ActivityStatus.done => (status.label, t.okBg, t.okFg),
+      _ when late => (S.lateLabel, t.dangerBg, t.dangerFg),
+      _ => (S.statusTodo, t.neutralBg, t.neutralFg),
     };
-    return StatusPill(label: status.label, background: bg, foreground: fg);
+    return StatusPill(label: label, background: bg, foreground: fg);
   }
 }

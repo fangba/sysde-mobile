@@ -23,6 +23,7 @@ class SubjectLabels {
     this.stickyFilters = true,
     this.showEndDate = false,
     this.monthCardWord = 'Session',
+    this.pendingLabel = S.syncPending,
   });
 
   /// Devant le nom du sujet, en majuscules : « PLANTATION », « SAIGNEUR »...
@@ -34,7 +35,7 @@ class SubjectLabels {
   /// Accord de « trouve » et de « un / une ».
   final bool masculine;
 
-  /// Libelle de la n-ieme activite du sujet : « 2e visite », « Session 2 ».
+  /// Libelle de la n-ieme activite du sujet : « Visite 2 », « Session 2 ».
   final String Function(int rank) item;
   final String doneLabel;
 
@@ -68,6 +69,9 @@ class SubjectLabels {
 
   /// Mot qui precede le mois sur la carte (« Session » ou « Perfectionnement »).
   final String monthCardWord;
+
+  /// Statut d'une activite pas encore due (date non arrivee).
+  final String pendingLabel;
 
   String get _sectionCap => '${sectionWord[0].toUpperCase()}${sectionWord.substring(1)}';
   String get sectionField => '$_sectionCap :';

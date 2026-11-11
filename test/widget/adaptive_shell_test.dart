@@ -138,13 +138,13 @@ void main() {
 
     expect(find.text('1 plantation'), findsOneWidget);
     expect(find.text('PLANTATION YAO KOUASSI'), findsOneWidget);
-    expect(find.text('Visite effectuée'), findsOneWidget);
+    expect(find.text('Terminée'), findsOneWidget);
     expect(find.text('100%'), findsOneWidget);
     // Les plantations des autres types de visite n'apparaissent pas ici.
     expect(find.text('PLANTATION AHIZI AKA MATHIEU'), findsNothing);
 
     // Toucher une visite ouvre Controle / Rapport, meme style de page.
-    await tester.tap(find.text('Visite effectuée'));
+    await tester.tap(find.text('Terminée'));
     await tester.pumpAndSettle();
     expect(find.byType(VisitActionsPage), findsOneWidget);
     expect(find.text('Contrôle'), findsOneWidget);
@@ -235,7 +235,7 @@ void main() {
       await tester.ensureVisible(find.text('Animation $n'));
       expect(find.text('Animation $n'), findsOneWidget);
     }
-    expect(find.text('Animation effectuée'), findsOneWidget);
+    expect(find.text('Terminée'), findsOneWidget);
     expect(find.text('25%'), findsOneWidget);
   });
 
@@ -264,8 +264,8 @@ void main() {
     // Section Nord : 7 plantations, 5 par page, la premiere est depliee.
     expect(find.text('7 plantations'), findsOneWidget);
     expect(find.text('PLANTATION AHIZI AKA MATHIEU'), findsOneWidget);
-    expect(find.text('1ère visite'), findsOneWidget);
-    expect(find.text('2e visite'), findsOneWidget);
+    expect(find.text('Visite 1'), findsOneWidget);
+    expect(find.text('Visite 2'), findsOneWidget);
     expect(find.text('50%'), findsOneWidget);
     expect(find.text('PLANTATION KONAN BROU'), findsNothing);
 
