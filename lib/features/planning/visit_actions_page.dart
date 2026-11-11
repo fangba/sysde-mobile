@@ -121,7 +121,7 @@ class VisitActionsPage extends ConsumerWidget {
       return (trainingLabelsFor(a.trainingType!), '/activite/formation/${a.trainingType!.slug}');
     }
     if (a.meetingType != null) {
-      return (meetingLabels, '/activite/rencontre/${a.meetingType!.slug}');
+      return (meetingLabelsFor(a.meetingType!), '/activite/rencontre/${a.meetingType!.slug}');
     }
     return (visitLabels, '/activite');
   }

@@ -220,18 +220,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ActivitiesBySubjectPage), findsOneWidget);
-    expect(find.text('Sélectionnez une section pour afficher les groupes.'), findsOneWidget);
+    expect(find.text('Sélectionnez un lot pour afficher la conférence.'), findsOneWidget);
 
     await tester.tap(find.byType(DropdownButton<String>));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Nord').last);
     await tester.pumpAndSettle();
 
-    expect(find.text('1 groupe'), findsOneWidget);
-    expect(find.text('GROUPE UNION'), findsOneWidget);
-    expect(find.text('Animation 1'), findsOneWidget);
+    // Une carte « CONFÉRENCE » avec ses 4 dates.
+    expect(find.text('Rechercher une conférence'), findsOneWidget);
+    expect(find.text('1 conférence'), findsOneWidget);
+    expect(find.text('CONFÉRENCE'), findsOneWidget);
+    for (final n in [1, 2, 3, 4]) {
+      await tester.ensureVisible(find.text('Animation $n'));
+      expect(find.text('Animation $n'), findsOneWidget);
+    }
     expect(find.text('Animation effectuée'), findsOneWidget);
-    expect(find.text('100%'), findsOneWidget);
+    expect(find.text('25%'), findsOneWidget);
   });
 
   testWidgets('visite de plantation : section, recherche, pagination', (tester) async {

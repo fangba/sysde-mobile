@@ -68,26 +68,32 @@ List<String> distinctValues(Iterable<String?> values) =>
 /// Une carte par session de formation : il n'y en a qu'une par mois, nommee
 /// d'apres ce mois (« Session Janvier »), de la plus ancienne a la plus
 /// recente. `query` filtre sur ce nom.
+///
+/// Avec `yearlyName`, la session est annuelle (recyclage : une seule par
+/// annee) : une carte par annee, portant ce nom.
 List<SubjectGroup> groupBySession(
   Iterable<Activity> sessions, {
   String? section,
   String query = '',
+  String? yearlyName,
 }) {
+  String nameOf(DateTime d) => yearlyName ?? formatSessionName(d);
+  (int, int) keyOf(DateTime d) => (d.year, yearlyName == null ? d.month : 0);
   final needle = normalizeForSearch(query);
   final byMonth = <(int, int), List<Activity>>{};
   for (final a in sessions) {
     if (section != null && a.section != section) continue;
-    if (needle.isNotEmpty && !normalizeForSearch(formatSessionName(a.date)).contains(needle)) {
+    if (needle.isNotEmpty && !normalizeForSearch(nameOf(a.date)).contains(needle)) {
       continue;
     }
-    byMonth.putIfAbsent((a.date.year, a.date.month), () => []).add(a);
+    byMonth.putIfAbsent(keyOf(a.date), () => []).add(a);
   }
   final months = byMonth.keys.toList()
     ..sort((a, b) => a.$1 != b.$1 ? a.$1.compareTo(b.$1) : a.$2.compareTo(b.$2));
   return [
     for (final m in months)
       SubjectGroup(
-        name: formatSessionName(byMonth[m]!.first.date),
+        name: nameOf(byMonth[m]!.first.date),
         section: byMonth[m]!.first.section ?? '',
         village: byMonth[m]!.first.village ?? '',
         visits: [...byMonth[m]!]..sort((a, b) => a.date.compareTo(b.date)),

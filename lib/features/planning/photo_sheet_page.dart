@@ -15,6 +15,7 @@ class PhotoSheetPage extends StatelessWidget {
     required this.backPath,
     required this.children,
     this.titleColor,
+    this.pinned = const [],
   });
 
   final String title;
@@ -24,12 +25,25 @@ class PhotoSheetPage extends StatelessWidget {
   final String backPath;
   final List<Widget> children;
 
+  /// Widgets figes sous le titre : seul `children` defile en dessous.
+  /// Vide : tout (titre compris) defile, comme avant.
+  final List<Widget> pinned;
+
   /// Couleur du titre (par defaut celle du texte), pour le mettre en exergue.
   final Color? titleColor;
 
   static const _photo = 'assets/images/carousel/plantation.jpg';
   static const _photoHeight = 230.0;
   static const _sheetTop = 196.0;
+
+  Widget _titleText(BuildContext context) => Text(
+        title,
+        textAlign: TextAlign.center,
+        style: context.text.titleLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+          color: titleColor,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -65,21 +79,33 @@ class PhotoSheetPage extends StatelessWidget {
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 720),
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-                    children: [
-                      Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: context.text.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: titleColor,
+                  child: pinned.isEmpty
+                      ? ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+                          children: [_titleText(context), const SizedBox(height: 12), ...children],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _titleText(context),
+                                  const SizedBox(height: 12),
+                                  ...pinned,
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: ListView(
+                                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                                children: children,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      ...children,
-                    ],
-                  ),
                 ),
               ),
             ),

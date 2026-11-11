@@ -103,7 +103,12 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
         ? null
         : paginate(
             widget.labels.sessionCards
-                ? groupBySession(visits, section: section, query: _search.text)
+                ? groupBySession(
+                    visits,
+                    section: section,
+                    query: _search.text,
+                    yearlyName: widget.labels.yearlySessionName,
+                  )
                 : groupBySubject(
                     visits,
                     section: section,
@@ -114,86 +119,93 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
             pageSize: widget.pageSize,
           );
 
-    return PhotoSheetPage(
-      title: widget.title,
-      fallbackIcon: widget.icon,
-      backPath: widget.backPath,
-      children: [
-        if (twoLevel) ...[
+    final fields = <Widget>[
+      if (twoLevel) ...[
+        _SectionField(
+          label: widget.labels.sectionField,
+          hint: widget.labels.chooseSection,
+          value: lot,
+          options: distinctValues(visits.map((a) => a.lot)),
+          onChanged: _setLot,
+        ),
+        if (lot != null)
           _SectionField(
-            label: widget.labels.sectionField,
-            hint: widget.labels.chooseSection,
-            value: lot,
-            options: distinctValues(visits.map((a) => a.lot)),
-            onChanged: _setLot,
-          ),
-          if (lot != null)
-            _SectionField(
-              label: S.sectionField,
-              hint: S.chooseSection,
-              value: section,
-              options: sectionOptions,
-              onChanged: _setSection,
-            ),
-        ] else
-          _SectionField(
-            label: widget.labels.sectionField,
-            hint: widget.labels.chooseSection,
+            label: S.sectionField,
+            hint: S.chooseSection,
             value: section,
             options: sectionOptions,
             onChanged: _setSection,
           ),
-        const SizedBox(height: 16),
-        if (slice == null)
-          _PickSectionHint(
-            text: !twoLevel
-                ? widget.labels.pickHint
-                : lot == null
-                    ? S.pickLotForSections
-                    : S.pickSectionOfLot(widget.labels.plural),
-            icon: widget.labels.typeIconOnHint ? widget.icon : Icons.park_outlined,
-          )
-        else ...[
-          _SearchField(
+      ] else
+        _SectionField(
+          label: widget.labels.sectionField,
+          hint: widget.labels.chooseSection,
+          value: section,
+          options: sectionOptions,
+          onChanged: _setSection,
+        ),
+      const SizedBox(height: 16),
+    ];
+    final search = slice == null
+        ? null
+        : _SearchField(
             hint: widget.labels.searchHint,
             controller: _search,
             onChanged: _setQuery,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.labels.count(slice.total),
-            style: TextStyle(fontSize: 13, color: context.tokens.inkMuted),
-          ),
-          const SizedBox(height: 12),
-          if (slice.items.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Center(
-                child: Text(
-                  widget.labels.empty,
-                  style: TextStyle(color: context.tokens.inkMuted),
-                ),
+          );
+    final body = <Widget>[
+      if (slice == null)
+        _PickSectionHint(
+          text: !twoLevel
+              ? widget.labels.pickHint
+              : lot == null
+                  ? S.pickLotForSections
+                  : S.pickSectionOfLot(widget.labels.plural),
+          icon: widget.labels.typeIconOnHint ? widget.icon : Icons.park_outlined,
+        )
+      else ...[
+        if (!widget.labels.stickyFilters) search!,
+        const SizedBox(height: 8),
+        Text(
+          widget.labels.count(slice.total),
+          style: TextStyle(fontSize: 13, color: context.tokens.inkMuted),
+        ),
+        const SizedBox(height: 12),
+        if (slice.items.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32),
+            child: Center(
+              child: Text(
+                widget.labels.empty,
+                style: TextStyle(color: context.tokens.inkMuted),
               ),
-            )
-          else
-            for (var i = 0; i < slice.items.length; i++) ...[
-              _SubjectTile(
-                labels: widget.labels,
-                group: slice.items[i],
-                today: today,
-                open: (i == 0) != _toggled.contains(slice.items[i].visits.first.id),
-                onToggle: () => setState(() {
-                  final key = slice.items[i].visits.first.id;
-                  if (!_toggled.remove(key)) _toggled.add(key);
-                }),
-                onOpenVisit: (a) => context.push('/action/${a.id}'),
-              ),
-              const SizedBox(height: 14),
-            ],
-          if (slice.pageCount > 1)
-            _PaginationBar(slice: slice, onGoTo: _goTo),
-        ],
+            ),
+          )
+        else
+          for (var i = 0; i < slice.items.length; i++) ...[
+            _SubjectTile(
+              labels: widget.labels,
+              group: slice.items[i],
+              today: today,
+              open: (i == 0) != _toggled.contains(slice.items[i].visits.first.id),
+              onToggle: () => setState(() {
+                final key = slice.items[i].visits.first.id;
+                if (!_toggled.remove(key)) _toggled.add(key);
+              }),
+              onOpenVisit: (a) => context.push('/action/${a.id}'),
+            ),
+            const SizedBox(height: 14),
+          ],
+        if (slice.pageCount > 1) _PaginationBar(slice: slice, onGoTo: _goTo),
       ],
+    ];
+
+    return PhotoSheetPage(
+      title: widget.title,
+      fallbackIcon: widget.icon,
+      backPath: widget.backPath,
+      pinned: widget.labels.stickyFilters ? [...fields, if (search != null) search] : const [],
+      children: widget.labels.stickyFilters ? body : [...fields, ...body],
     );
   }
 }

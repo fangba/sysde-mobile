@@ -1,4 +1,5 @@
 import '../../core/strings.dart';
+import '../../domain/meeting_type.dart';
 import '../../domain/training_type.dart';
 
 /// Libelles d'une page « par sujet » : le sujet est la plantation (visite),
@@ -17,6 +18,9 @@ class SubjectLabels {
     this.lotThenSection = false,
     this.typeIconOnHint = false,
     this.sessionCards = false,
+    this.yearlySessionName,
+    this.searchName,
+    this.stickyFilters = true,
   });
 
   /// Devant le nom du sujet, en majuscules : « PLANTATION », « SAIGNEUR »...
@@ -48,12 +52,21 @@ class SubjectLabels {
   /// Une carte par session (« Session de Janvier ») au lieu d'une par sujet.
   final bool sessionCards;
 
+  /// Session annuelle (recyclage) : une carte par annee, portant ce nom.
+  final String? yearlySessionName;
+
+  /// Mot du champ de recherche si different du singulier (« voyage »).
+  final String? searchName;
+
+  /// Titre, listes de choix et recherche restent figes : seule la liste defile.
+  final bool stickyFilters;
+
   String get _sectionCap => '${sectionWord[0].toUpperCase()}${sectionWord.substring(1)}';
   String get sectionField => '$_sectionCap :';
   String get chooseSection => 'Choisir ${sectionFeminine ? 'une' : 'un'} $sectionWord';
 
   String count(int n) => '$n ${n > 1 ? plural : single}';
-  String get searchHint => 'Rechercher ${masculine ? 'un' : 'une'} $single';
+  String get searchHint => 'Rechercher ${masculine ? 'un' : 'une'} ${searchName ?? single}';
   String get pickHint => 'Sélectionnez ${sectionFeminine ? 'une' : 'un'} $sectionWord pour afficher ${pickTarget ?? 'les $plural'}.';
   String get empty => masculine ? 'Aucun $single trouvé.' : 'Aucune $single trouvée.';
 }
@@ -109,15 +122,17 @@ const postControlTrainingLabels = SubjectLabels(
 /// Recyclage des saigneurs : les saigneurs sont regroupes par lot.
 const recyclingTrainingLabels = SubjectLabels(
   prefix: 'SAIGNEUR',
-  single: 'saigneur',
-  plural: 'saigneurs',
-  masculine: true,
-  item: _session,
+  single: 'session',
+  plural: 'sessions',
+  masculine: false,
+  item: _recyclingSession,
   doneLabel: S.sessionDone,
   typeIconOnHint: true,
   sectionWord: 'lot',
   sectionFeminine: false,
   pickTarget: 'la session de recyclage',
+  sessionCards: true,
+  yearlySessionName: 'RECYCLAGE',
 );
 
 SubjectLabels trainingLabelsFor(TrainingType type) => switch (type) {
@@ -134,8 +149,49 @@ const meetingLabels = SubjectLabels(
   masculine: true,
   item: _animation,
   doneLabel: S.animationDone,
+  typeIconOnHint: true,
 );
 
+String _recyclingSession(int n) => 'Session de recyclage';
 String _formationSession(int n) => 'Session de formation';
 String _session(int n) => 'Session $n';
+/// Conference thematique : les groupes sont regroupes par lot.
+const conferenceLabels = SubjectLabels(
+  prefix: '',
+  single: 'conférence',
+  plural: 'conférences',
+  masculine: false,
+  item: _animation,
+  doneLabel: S.animationDone,
+  typeIconOnHint: true,
+  sectionWord: 'lot',
+  sectionFeminine: false,
+  pickTarget: 'la conférence',
+  sessionCards: true,
+  yearlySessionName: 'CONFÉRENCE',
+);
+
+/// Voyage d'etude : meme principe que la conference (lot, une carte, 4 dates).
+const studyTripLabels = SubjectLabels(
+  prefix: '',
+  single: "voyage d'étude",
+  plural: "voyages d'étude",
+  masculine: true,
+  item: _animation,
+  doneLabel: S.animationDone,
+  typeIconOnHint: true,
+  sectionWord: 'lot',
+  sectionFeminine: false,
+  pickTarget: "le voyage d'étude",
+  sessionCards: true,
+  yearlySessionName: 'VOYAGE',
+  searchName: 'voyage',
+);
+
+SubjectLabels meetingLabelsFor(MeetingType type) => switch (type) {
+      MeetingType.conference => conferenceLabels,
+      MeetingType.studyTrip => studyTripLabels,
+      _ => meetingLabels,
+    };
+
 String _animation(int n) => 'Animation $n';
