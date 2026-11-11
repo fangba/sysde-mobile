@@ -99,12 +99,12 @@ void main() {
     await tester.tap(find.text('Nord').last);
     await tester.pumpAndSettle();
 
-    expect(find.text('1 saigneur'), findsOneWidget);
-    expect(find.text('SAIGNEUR KOUAMÉ JEAN'), findsOneWidget);
-    expect(find.text('Session 1'), findsOneWidget);
-    expect(find.text('Session 2'), findsOneWidget);
-    expect(find.text('Session terminée'), findsOneWidget);
-    expect(find.text('50%'), findsOneWidget);
+    // Une carte par session, chacune avec une seule session.
+    expect(find.text('Rechercher une session'), findsOneWidget);
+    expect(find.text('2 sessions'), findsOneWidget);
+    expect(find.text('Session Septembre'), findsOneWidget);
+    expect(find.text('Session Octobre'), findsOneWidget);
+    expect(find.text('SAIGNEUR KOUAMÉ JEAN'), findsNothing);
   });
 
   testWidgets('activité : visite de plantation, types puis liste', (tester) async {

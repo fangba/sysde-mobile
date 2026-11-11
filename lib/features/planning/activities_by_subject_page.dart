@@ -102,12 +102,14 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
     final slice = section == null || (twoLevel && lot == null)
         ? null
         : paginate(
-            groupBySubject(
-              visits,
-              section: section,
-              lot: twoLevel ? lot : null,
-              query: _search.text,
-            ),
+            widget.labels.sessionCards
+                ? groupBySession(visits, section: section, query: _search.text)
+                : groupBySubject(
+                    visits,
+                    section: section,
+                    lot: twoLevel ? lot : null,
+                    query: _search.text,
+                  ),
             page: _page,
             pageSize: widget.pageSize,
           );
@@ -179,10 +181,10 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
                 labels: widget.labels,
                 group: slice.items[i],
                 today: today,
-                open: (i == 0) != _toggled.contains(slice.items[i].name),
+                open: (i == 0) != _toggled.contains(slice.items[i].visits.first.id),
                 onToggle: () => setState(() {
-                  final name = slice.items[i].name;
-                  if (!_toggled.remove(name)) _toggled.add(name);
+                  final key = slice.items[i].visits.first.id;
+                  if (!_toggled.remove(key)) _toggled.add(key);
                 }),
                 onOpenVisit: (a) => context.push('/action/${a.id}'),
               ),
@@ -357,7 +359,8 @@ class _SubjectTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final percent = (group.rate * 100).round();
-    final name = '${labels.prefix} ${group.name.toUpperCase()}'.trim();
+    final name =
+        labels.sessionCards ? group.name : '${labels.prefix} ${group.name.toUpperCase()}'.trim();
     return SysCard(
       padding: EdgeInsets.zero,
       child: ClipRRect(

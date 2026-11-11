@@ -16,6 +16,7 @@ class SubjectLabels {
     this.pickTarget,
     this.lotThenSection = false,
     this.typeIconOnHint = false,
+    this.sessionCards = false,
   });
 
   /// Devant le nom du sujet, en majuscules : « PLANTATION », « SAIGNEUR »...
@@ -43,6 +44,9 @@ class SubjectLabels {
 
   /// La consigne montre l'icone du type d'activite (formation) plutot que l'arbre.
   final bool typeIconOnHint;
+
+  /// Une carte par session (« Session de Janvier ») au lieu d'une par sujet.
+  final bool sessionCards;
 
   String get _sectionCap => '${sectionWord[0].toUpperCase()}${sectionWord.substring(1)}';
   String get sectionField => '$_sectionCap :';
@@ -76,15 +80,16 @@ const trainingLabels = SubjectLabels(
 /// Formation initiale : les saigneurs sont regroupes par lot, pas par section.
 const initialTrainingLabels = SubjectLabels(
   prefix: 'SAIGNEUR',
-  single: 'saigneur',
-  plural: 'saigneurs',
-  masculine: true,
-  item: _session,
+  single: 'session',
+  plural: 'sessions',
+  masculine: false,
+  item: _formationSession,
   doneLabel: S.sessionDone,
   typeIconOnHint: true,
   sectionWord: 'lot',
   sectionFeminine: false,
   pickTarget: 'les sessions de formation',
+  sessionCards: true,
 );
 
 /// Suivi post perfectionnement : meme regroupement par lot.
@@ -131,5 +136,6 @@ const meetingLabels = SubjectLabels(
   doneLabel: S.animationDone,
 );
 
+String _formationSession(int n) => 'Session de formation';
 String _session(int n) => 'Session $n';
 String _animation(int n) => 'Animation $n';

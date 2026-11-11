@@ -52,3 +52,7 @@ String formatLastSync(DateTime? at, DateTime now) {
 
 /// "27 octobre à 08:15"
 String formatDayTime(DateTime d) => '${formatDay(d)} à ${_hhmm(d)}';
+
+/// "Session Janvier", "Session Octobre" : nom de la session de formation du
+/// mois (il n'y en a qu'une par mois).
+String formatSessionName(DateTime d) => 'Session ${_cap(_months[d.month - 1])}';
