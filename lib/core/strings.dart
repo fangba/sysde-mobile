@@ -220,6 +220,9 @@ abstract final class S {
   static const nextMonth = 'Mois suivant';
   static const noActivityThatDay = 'Aucune activité ce jour.';
   static const sectionField = 'Section :';
+  static const pickLotForSections = 'Sélectionnez un lot pour choisir les sections.';
+  static String pickSectionOfLot(String plural) =>
+      'Sélectionnez une section pour afficher les $plural.';
   static const chooseSection = 'Choisir une section';
   static const clearSearch = 'Effacer la recherche';
   static const previous = 'Précédent';

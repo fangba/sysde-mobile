@@ -49,6 +49,7 @@ class ActivitiesBySubjectPage extends ConsumerStatefulWidget {
 
 class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPage> {
   final _search = TextEditingController();
+  String? _lot;
   String? _section;
   int _page = 0;
 
@@ -61,6 +62,13 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
     _search.dispose();
     super.dispose();
   }
+
+  void _setLot(String? v) => setState(() {
+        _lot = v;
+        _section = null;
+        _page = 0;
+        _toggled.clear();
+      });
 
   void _setSection(String? v) => setState(() {
         _section = v;
@@ -85,11 +93,21 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
       for (final a in ref.watch(activitiesProvider))
         if (widget.matches(a)) a,
     ];
+    final twoLevel = widget.labels.lotThenSection;
+    final lot = _lot;
     final section = _section;
-    final slice = section == null
+    final sectionOptions = distinctValues(
+      visits.where((a) => !twoLevel || a.lot == lot).map((a) => a.section),
+    );
+    final slice = section == null || (twoLevel && lot == null)
         ? null
         : paginate(
-            groupBySubject(visits, section: section, query: _search.text),
+            groupBySubject(
+              visits,
+              section: section,
+              lot: twoLevel ? lot : null,
+              query: _search.text,
+            ),
             page: _page,
             pageSize: widget.pageSize,
           );
@@ -99,14 +117,40 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
       fallbackIcon: widget.icon,
       backPath: widget.backPath,
       children: [
-        _SectionField(
-          value: section,
-          options: distinctValues(visits.map((a) => a.section)),
-          onChanged: _setSection,
-        ),
+        if (twoLevel) ...[
+          _SectionField(
+            label: widget.labels.sectionField,
+            hint: widget.labels.chooseSection,
+            value: lot,
+            options: distinctValues(visits.map((a) => a.lot)),
+            onChanged: _setLot,
+          ),
+          if (lot != null)
+            _SectionField(
+              label: S.sectionField,
+              hint: S.chooseSection,
+              value: section,
+              options: sectionOptions,
+              onChanged: _setSection,
+            ),
+        ] else
+          _SectionField(
+            label: widget.labels.sectionField,
+            hint: widget.labels.chooseSection,
+            value: section,
+            options: sectionOptions,
+            onChanged: _setSection,
+          ),
         const SizedBox(height: 16),
         if (slice == null)
-          _PickSectionHint(text: widget.labels.pickHint)
+          _PickSectionHint(
+            text: !twoLevel
+                ? widget.labels.pickHint
+                : lot == null
+                    ? S.pickLotForSections
+                    : S.pickSectionOfLot(widget.labels.plural),
+            icon: widget.labels.typeIconOnHint ? widget.icon : Icons.park_outlined,
+          )
         else ...[
           _SearchField(
             hint: widget.labels.searchHint,
@@ -154,11 +198,15 @@ class _ActivitiesBySubjectPageState extends ConsumerState<ActivitiesBySubjectPag
 
 class _SectionField extends StatelessWidget {
   const _SectionField({
+    required this.label,
+    required this.hint,
     required this.value,
     required this.options,
     required this.onChanged,
   });
 
+  final String label;
+  final String hint;
   final String? value;
   final List<String> options;
   final ValueChanged<String?> onChanged;
@@ -170,13 +218,13 @@ class _SectionField extends StatelessWidget {
       decoration: BoxDecoration(border: Border(bottom: BorderSide(color: t.line))),
       child: Row(
         children: [
-          const Text(S.sectionField, style: TextStyle(fontWeight: FontWeight.w700)),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(width: 16),
           Expanded(
             child: DropdownButton<String>(
               value: value,
               isExpanded: true,
-              hint: Text(S.chooseSection, style: TextStyle(color: t.inkMuted)),
+              hint: Text(hint, style: TextStyle(color: t.inkMuted)),
               underline: const SizedBox.shrink(),
               items: [
                 for (final o in options) DropdownMenuItem<String>(value: o, child: Text(o)),
@@ -191,9 +239,10 @@ class _SectionField extends StatelessWidget {
 }
 
 class _PickSectionHint extends StatelessWidget {
-  const _PickSectionHint({required this.text});
+  const _PickSectionHint({required this.text, required this.icon});
 
   final String text;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +251,7 @@ class _PickSectionHint extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 16),
       child: Column(
         children: [
-          Icon(Icons.park_outlined, size: 48, color: t.inkMuted),
+          Icon(icon, size: 48, color: t.inkMuted),
           const SizedBox(height: 12),
           Text(
             text,

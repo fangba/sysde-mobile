@@ -92,7 +92,7 @@ GoRouter buildRouter({String initialLocation = '/'}) {
                           return ActivitiesBySubjectPage(
                             title: type.label,
                             icon: type.icon,
-                            labels: trainingLabels,
+                            labels: trainingLabelsFor(type),
                             matches: (a) => a.trainingType == type,
                             backPath: '/activite/formation',
                           );

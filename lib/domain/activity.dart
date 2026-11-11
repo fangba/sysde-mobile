@@ -21,6 +21,7 @@ class Activity {
     this.visitType,
     this.meetingType,
     this.section,
+    this.lot,
     this.village,
     this.subjectName,
     this.rank,
@@ -51,6 +52,10 @@ class Activity {
   /// (1re visite, session 2...) et date de fin de la periode. Null sinon.
   final String? section;
   final String? village;
+
+  /// Lot (au-dessus de la section) : renseigne pour le suivi post
+  /// perfectionnement, ou on choisit d'abord le lot puis la section.
+  final String? lot;
   final String? subjectName;
   final int? rank;
   final DateTime? endDate;

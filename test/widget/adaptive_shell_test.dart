@@ -91,7 +91,7 @@ void main() {
 
     // Meme principe que la visite : section d'abord, puis les saigneurs.
     expect(find.byType(ActivitiesBySubjectPage), findsOneWidget);
-    expect(find.text('Sélectionnez une section pour afficher les saigneurs.'), findsOneWidget);
+    expect(find.text('Sélectionnez un lot pour afficher les sessions de formation.'), findsOneWidget);
     expect(find.text('SAIGNEUR KOUAMÉ JEAN'), findsNothing);
 
     await tester.tap(find.byType(DropdownButton<String>));

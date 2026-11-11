@@ -56,7 +56,7 @@ class VisitActionsPage extends ConsumerWidget {
               Icon(Icons.place_outlined, size: 18, color: context.scheme.primary),
               const SizedBox(width: 4),
               Text(
-                '${S.sectionField} $section',
+                '${labels.sectionField} $section',
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
             ],
@@ -118,7 +118,7 @@ class VisitActionsPage extends ConsumerWidget {
       return (visitLabels, '/activite/visite/${a.visitType!.slug}');
     }
     if (a.trainingType != null) {
-      return (trainingLabels, '/activite/formation/${a.trainingType!.slug}');
+      return (trainingLabelsFor(a.trainingType!), '/activite/formation/${a.trainingType!.slug}');
     }
     if (a.meetingType != null) {
       return (meetingLabels, '/activite/rencontre/${a.meetingType!.slug}');

@@ -25,13 +25,14 @@ class SubjectGroup {
   double get rate => total == 0 ? 0 : done / total;
 }
 
-/// Regroupe les activites par sujet (ordre alphabetique). `section` garde
-/// une seule section (null = toutes) ; `query` garde les plantations dont le
+/// Regroupe les activites par sujet (ordre alphabetique). `section` (et `lot`)
+/// gardent une seule valeur (null = toutes) ; `query` garde les plantations dont le
 /// nom du sujet contient le texte, sans tenir compte de la casse ni des accents. Les
 /// activites sans sujet sont ignorees.
 List<SubjectGroup> groupBySubject(
   Iterable<Activity> visits, {
   String? section,
+  String? lot,
   String query = '',
 }) {
   final needle = normalizeForSearch(query);
@@ -40,6 +41,7 @@ List<SubjectGroup> groupBySubject(
     final name = v.subjectName;
     if (name == null) continue;
     if (section != null && v.section != section) continue;
+    if (lot != null && v.lot != lot) continue;
     if (needle.isNotEmpty && !normalizeForSearch(name).contains(needle)) continue;
     byName.putIfAbsent(name, () => []).add(v);
   }
