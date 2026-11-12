@@ -7,7 +7,7 @@ import '../../../core/widgets/sys_widgets.dart';
 import '../../../domain/activity.dart';
 
 /// Onglets Formations / Rencontres / Visites, avec pour chacun les activites
-/// en attente et terminees (compteur, anneau, part du total).
+/// en attente, en retard et terminees (compteur, anneau, part du total).
 class CategoryPanel extends StatefulWidget {
   const CategoryPanel({super.key, required this.stats});
 
@@ -54,6 +54,13 @@ class _CategoryPanelState extends State<CategoryPanel> {
             count: stats.pending,
             share: stats.pendingShare,
             color: t.warnFg,
+          ),
+          Divider(height: 1, color: t.line),
+          _StatRow(
+            label: S.lateUpper,
+            count: stats.late,
+            share: stats.lateShare,
+            color: t.dangerFg,
           ),
           Divider(height: 1, color: t.line),
           _StatRow(

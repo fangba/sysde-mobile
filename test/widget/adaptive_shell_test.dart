@@ -7,6 +7,8 @@ import 'package:sysde_mobile/features/planning/activities_by_subject_page.dart';
 import 'package:sysde_mobile/features/auth/splash_page.dart';
 import 'package:sysde_mobile/features/planning/orchard_discovery_page.dart';
 import 'package:sysde_mobile/features/plantation/new_plantation_page.dart';
+import 'package:sysde_mobile/domain/control.dart';
+import 'package:sysde_mobile/features/planning/attendance_page.dart';
 import 'package:sysde_mobile/features/planning/participants_page.dart';
 import 'package:sysde_mobile/features/planning/section_card.dart';
 import 'package:sysde_mobile/features/planning/visit_actions_page.dart';
@@ -54,9 +56,9 @@ void main() {
     await tester.ensureVisible(find.text('FORMATIONS'));
     await tester.tap(find.text('FORMATIONS'));
     await tester.pumpAndSettle();
-    // Formations : 0 en attente, 2 terminees -> 0 % et 100 %.
+    // Formations : 0 en attente, 0 en retard, 2 terminees -> 0 %, 0 % et 100 %.
     expect(find.text('100 %'), findsOneWidget);
-    expect(find.text('0 %'), findsOneWidget);
+    expect(find.text('0 %'), findsNWidgets(2));
 
     // Toucher une ligne n'ouvre aucun ecran : on reste sur l'accueil.
     await tester.tap(find.text('100 %'));
@@ -143,52 +145,77 @@ void main() {
     // Les plantations des autres types de visite n'apparaissent pas ici.
     expect(find.text('PLANTATION AHIZI AKA MATHIEU'), findsNothing);
 
-    // Toucher une visite ouvre Controle / Rapport, meme style de page.
+    // Toucher une visite ouvre les 3 etapes.
     await tester.tap(find.text('Terminée'));
     await tester.pumpAndSettle();
     expect(find.byType(VisitActionsPage), findsOneWidget);
+    expect(find.text('Liste de présence'), findsOneWidget);
     expect(find.text('Contrôle'), findsOneWidget);
     expect(find.text('Rapport'), findsOneWidget);
+    expect(find.text('0 sur 3 étapes terminées'), findsOneWidget);
     expect(find.text('PLANTATION YAO KOUASSI'), findsOneWidget);
     expect(find.text('Section : Nord'), findsOneWidget);
     // Une visite se fait en 1 jour : pas de date de fin.
     expect(find.textContaining('Date fin'), findsNothing);
 
-    // Controle : liste des participants.
+    // Controle et rapport sont grises tant que la presence n'est pas faite.
+    await tester.tap(find.text('Contrôle'));
+    await tester.pumpAndSettle();
+    expect(find.byType(VisitActionsPage), findsOneWidget);
+    expect(find.text("Faites d'abord la liste de présence"), findsWidgets);
+    // Laisser la notification disparaitre avant de toucher Rapport.
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Rapport'));
+    await tester.pumpAndSettle();
+    expect(find.byType(VisitActionsPage), findsOneWidget);
+    // Laisser la notification disparaitre (elle masquerait le bouton du bas).
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pumpAndSettle();
+
+    // Liste de presence : on pointe tout le monde.
+    await tester.tap(find.text('Liste de présence'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AttendancePage), findsOneWidget);
+    expect(find.byType(Switch), findsNWidgets(3));
+    expect(find.text('0 présent sur 3'), findsOneWidget);
+    await tester.tap(find.text('Tout marquer présent'));
+    await tester.pumpAndSettle();
+    expect(find.text('3 présents sur 3'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Enregistrer la liste'), 200,
+        scrollable: find.byType(Scrollable).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Enregistrer la liste'));
+    await tester.pumpAndSettle();
+    expect(find.byType(VisitActionsPage), findsOneWidget);
+    expect(find.text('1 sur 3 étapes terminées'), findsOneWidget);
+
+    // Controle maintenant ouvert : seuls les presents sont listes.
     await tester.tap(find.text('Contrôle'));
     await tester.pumpAndSettle();
     expect(find.byType(ParticipantsPage), findsOneWidget);
-    expect(find.text('Participants'), findsOneWidget);
     expect(find.text('N GUESSAN Valentin'), findsOneWidget);
     expect(find.text('Saigneur / 78-85-55-58'), findsOneWidget);
     expect(find.text('Planteur / 78-98-89-98'), findsOneWidget);
-    expect(find.text('0 présent · 0 absent · 3 à renseigner'), findsOneWidget);
 
-    // Deplier un participant : presence puis cinq criteres.
+    // Deplier un participant : les cinq criteres (plus de question presence).
     expect(find.text('Consommation'), findsNothing);
     await tester.tap(find.text('N GUESSAN Valentin'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Présent'));
     await tester.pumpAndSettle();
     for (final c in ['Consommation', 'Profondeur', 'Pente', 'Blessures', 'Propreté']) {
       await tester.scrollUntilVisible(find.text(c), 120, scrollable: find.byType(Scrollable).first);
       expect(find.text(c), findsOneWidget);
     }
+
+    // Chaque critere se note par liste deroulante.
+    expect(find.byType(DropdownButton<Rating>), findsNWidgets(5));
     await tester.scrollUntilVisible(find.text('Consommation'), -120,
         scrollable: find.byType(Scrollable).first);
-    await tester.tap(find.text('Bon').first);
+    await tester.tap(find.byType(DropdownButton<Rating>).first);
     await tester.pumpAndSettle();
-    expect(find.text('Présent · 1/5'), findsOneWidget);
-    expect(find.text('1 présent · 0 absent · 2 à renseigner'), findsOneWidget);
-
-    // Un absent n'est pas evalue : les criteres disparaissent.
-    await tester.ensureVisible(find.text('Absent'));
+    await tester.tap(find.text('Bon').last);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Absent'));
-    await tester.pumpAndSettle();
-    expect(find.text('Consommation'), findsNothing);
-    expect(find.text('1 présent · 0 absent · 2 à renseigner'), findsNothing);
-    expect(find.text('0 présent · 1 absent · 2 à renseigner'), findsOneWidget);
+    expect(find.text('1 / 5'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Retour'));
     await tester.pumpAndSettle();

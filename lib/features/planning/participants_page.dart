@@ -38,8 +38,9 @@ class _ParticipantsPageState extends ConsumerState<ParticipantsPage> {
     if (current?.visitType == VisitType.conformity) {
       return ConformityNotesPage(activity: current!);
     }
-    final people = ref.watch(participantsProvider(id));
+    final everyone = ref.watch(participantsProvider(id));
     final controls = ref.watch(controlsProvider);
+    final presenceDone = ref.watch(visitProgressProvider(id)).attendance;
     final t = context.tokens;
     final scheme = context.scheme;
 
@@ -51,8 +52,13 @@ class _ParticipantsPageState extends ConsumerState<ParticipantsPage> {
 
     ParticipantControl of(Participant p) =>
         controls[controlKey(id, p.id)] ?? const ParticipantControl();
-    final summary = summarizeControl(people.map(of));
-    final allDone = people.isNotEmpty && people.every((p) => of(p).isComplete);
+    // La presence est faite avant : seuls les presents sont evalues.
+    final people = [
+      for (final p in everyone)
+        if (of(p).attendance == Attendance.present) p,
+    ];
+    final evaluated = people.where((p) => of(p).isComplete).length;
+    final allDone = people.isNotEmpty && evaluated == people.length;
 
     return PhotoSheetPage(
       title: S.actionControl,
@@ -86,7 +92,7 @@ class _ParticipantsPageState extends ConsumerState<ParticipantsPage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                   child: Text(
-                    S.controlSummary(summary.present, summary.absent, summary.pending),
+                    S.evaluatedOf(evaluated, people.length),
                     style: TextStyle(fontSize: 12.5, color: t.inkMuted),
                   ),
                 ),
@@ -94,7 +100,11 @@ class _ParticipantsPageState extends ConsumerState<ParticipantsPage> {
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Center(
-                    child: Text(S.noParticipant, style: TextStyle(color: t.inkMuted)),
+                    child: Text(
+                      presenceDone ? S.noParticipant : S.presenceFirst,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: t.inkMuted),
+                    ),
                   ),
                 )
               else
@@ -198,7 +208,12 @@ class _ParticipantTile extends StatelessWidget {
           curve: Curves.easeOut,
           alignment: Alignment.topCenter,
           child: open
-              ? EvaluationPanel(control: control, onAttendance: onAttendance, onRate: onRate)
+              ? EvaluationPanel(
+                  control: control,
+                  onAttendance: onAttendance,
+                  onRate: onRate,
+                  showAttendance: false,
+                )
               : const SizedBox(width: double.infinity),
         ),
       ],

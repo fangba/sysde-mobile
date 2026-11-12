@@ -58,13 +58,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         if (isSameDay(a.date, _selected)) a,
     ];
 
-    void open(Activity a) {
-      if (context.isCompact) {
-        context.push('/fiche/${a.id}');
-      } else {
-        ref.read(selectedActivityProvider.notifier).select(a.id);
-      }
-    }
+    // Toucher une activite ouvre directement sa page de realisation.
+    void open(Activity a) => context.push('/action/${a.id}');
 
     final list = ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -97,6 +92,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
               child: ActivityTile(
                 activity: a,
                 selected: !context.isCompact && a.id == selectedId,
+                late: isLate(
+                  done: a.status == ActivityStatus.done,
+                  plannedOn: a.date,
+                  today: today,
+                ),
                 onTap: () => open(a),
               ),
             ),

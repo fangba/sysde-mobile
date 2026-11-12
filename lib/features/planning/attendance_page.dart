@@ -4,12 +4,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/strings.dart';
 import '../../core/theme/tokens.dart';
+import '../../core/widgets/sys_widgets.dart';
 import '../../data/demo_data.dart';
 import '../../domain/control.dart';
 import '../../domain/participant.dart';
 import 'control_provider.dart';
-import 'evaluation_panel.dart';
 import 'photo_sheet_page.dart';
+import 'visit_actions_page.dart';
 
 /// Rencontre d'un groupe de vulgarisation : liste de presence des membres
 /// (present ou absent, sans evaluation).
@@ -24,17 +25,11 @@ class AttendancePage extends ConsumerWidget {
     final people = ref.watch(participantsProvider(activityId));
     final controls = ref.watch(controlsProvider);
     final notifier = ref.read(controlsProvider.notifier);
-    final name = ref
-        .watch(activitiesProvider)
-        .where((a) => a.id == activityId)
-        .map((a) => a.subjectName)
-        .firstOrNull;
+    final activity =
+        ref.watch(activitiesProvider).where((a) => a.id == activityId).firstOrNull;
 
     Attendance? of(Participant p) => controls[controlKey(activityId, p.id)]?.attendance;
-    final summary = summarizeControl(
-      people.map((p) => ParticipantControl(attendance: of(p))),
-    );
-    final allDone = people.isNotEmpty && people.every((p) => of(p) != null);
+    final presentCount = people.where((p) => of(p) == Attendance.present).length;
 
     return PhotoSheetPage(
       title: S.actionAttendance,
@@ -42,11 +37,20 @@ class AttendancePage extends ConsumerWidget {
       fallbackIcon: Icons.groups_outlined,
       backPath: '/action/$activityId',
       children: [
-        if (name != null)
-          Text(
-            name.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+        if (activity != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: brandGradient(context, radius: BorderRadius.circular(16)),
+            child: Text(
+              activityHeading(activity),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                letterSpacing: 0.4,
+              ),
+            ),
           ),
         const SizedBox(height: 16),
         if (people.isEmpty)
@@ -92,7 +96,7 @@ class AttendancePage extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                   child: Text(
-                    S.controlSummary(summary.present, summary.absent, summary.pending),
+                    S.presentOf(presentCount, people.length),
                     style: TextStyle(fontSize: 12.5, color: t.inkMuted),
                   ),
                 ),
@@ -110,14 +114,19 @@ class AttendancePage extends ConsumerWidget {
         if (people.isNotEmpty) ...[
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: allDone
-                ? () {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(const SnackBar(content: Text(S.attendanceSaved)));
-                    context.pop();
-                  }
-                : null,
+            onPressed: () {
+              // Un interrupteur laisse a "absent" tant qu'il n'est pas allume :
+              // a l'enregistrement, tout membre non pointe est absent.
+              for (final p in people) {
+                if (of(p) == null) {
+                  notifier.setAttendance(controlKey(activityId, p.id), Attendance.absent);
+                }
+              }
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(const SnackBar(content: Text(S.attendanceSaved)));
+              context.pop();
+            },
             style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
             child: const Text(S.saveAttendance),
           ),
@@ -137,16 +146,22 @@ class _MemberRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      child: LayoutBuilder(
-        builder: (context, c) {
-          final info = Row(
+    final present = attendance == Attendance.present;
+    return MergeSemantics(
+      child: InkWell(
+        onTap: () => onChanged(present ? Attendance.absent : Attendance.present),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+          child: Row(
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: t.okBg,
-                child: Icon(Icons.person_outline, size: 26, color: context.scheme.primary),
+                backgroundColor: present ? t.okBg : t.neutralBg,
+                child: Icon(
+                  Icons.person_outline,
+                  size: 26,
+                  color: present ? context.scheme.primary : t.inkMuted,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -165,47 +180,22 @@ class _MemberRow extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
-          );
-          final choices = Row(
-            children: [
-              Expanded(
-                child: ChoiceButton(
-                  label: S.attPresent,
-                  icon: Icons.check_circle_outline,
-                  color: t.okFg,
-                  selected: attendance == Attendance.present,
-                  compact: true,
-                  onTap: () => onChanged(Attendance.present),
-                ),
-              ),
               const SizedBox(width: 8),
-              Expanded(
-                child: ChoiceButton(
-                  label: S.attAbsent,
-                  icon: Icons.person_off_outlined,
-                  color: t.dangerFg,
-                  selected: attendance == Attendance.absent,
-                  compact: true,
-                  onTap: () => onChanged(Attendance.absent),
+              Text(
+                present ? S.attPresent : S.attAbsent,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: present ? t.okFg : t.dangerFg,
                 ),
               ),
+              Switch(
+                value: present,
+                onChanged: (v) => onChanged(v ? Attendance.present : Attendance.absent),
+              ),
             ],
-          );
-          if (c.maxWidth >= 520) {
-            return Row(
-              children: [
-                Expanded(child: info),
-                const SizedBox(width: 16),
-                SizedBox(width: 260, child: choices),
-              ],
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [info, const SizedBox(height: 10), choices],
-          );
-        },
+          ),
+        ),
       ),
     );
   }

@@ -15,6 +15,7 @@ class EvaluationPanel extends StatelessWidget {
     required this.onRate,
     this.reference,
     this.footer,
+    this.showAttendance = true,
   });
 
   final ParticipantControl control;
@@ -22,6 +23,10 @@ class EvaluationPanel extends StatelessWidget {
   final void Function(Criterion, Rating) onRate;
   final Map<Criterion, Rating>? reference;
   final Widget? footer;
+
+  /// Faux quand la presence est deja faite (liste de presence) : seuls les
+  /// criteres sont proposes.
+  final bool showAttendance;
 
   @override
   Widget build(BuildContext context) {
@@ -35,31 +40,33 @@ class EvaluationPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(S.attendanceQuestion, style: TextStyle(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: ChoiceButton(
-                  label: S.attPresent,
-                  icon: Icons.check_circle_outline,
-                  color: t.okFg,
-                  selected: att == Attendance.present,
-                  onTap: () => onAttendance(Attendance.present),
+          if (showAttendance) ...[
+            const Text(S.attendanceQuestion, style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: ChoiceButton(
+                    label: S.attPresent,
+                    icon: Icons.check_circle_outline,
+                    color: t.okFg,
+                    selected: att == Attendance.present,
+                    onTap: () => onAttendance(Attendance.present),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ChoiceButton(
-                  label: S.attAbsent,
-                  icon: Icons.person_off_outlined,
-                  color: t.dangerFg,
-                  selected: att == Attendance.absent,
-                  onTap: () => onAttendance(Attendance.absent),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ChoiceButton(
+                    label: S.attAbsent,
+                    icon: Icons.person_off_outlined,
+                    color: t.dangerFg,
+                    selected: att == Attendance.absent,
+                    onTap: () => onAttendance(Attendance.absent),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
           if (att == Attendance.absent) ...[
             const SizedBox(height: 12),
             Row(
@@ -142,8 +149,7 @@ Color _ratingColor(BuildContext context, Rating r) {
   };
 }
 
-/// Un critere : intitule + trois choix Bon / Moyen / Mauvais.
-/// Sur tablette, l'intitule est a gauche et les choix a droite sur une ligne.
+/// Un critere : intitule a gauche, liste deroulante Bon / Moyen / Mauvais a droite.
 class _CriterionRow extends StatelessWidget {
   const _CriterionRow({
     required this.criterion,
@@ -177,44 +183,78 @@ class _CriterionRow extends StatelessWidget {
             ],
           ),
         ),
-        if (done) Icon(Icons.check_circle, size: 18, color: _ratingColor(context, rating!)),
       ],
     );
-    final choices = Row(
-      children: [
-        for (final r in Rating.values) ...[
-          if (r != Rating.good) const SizedBox(width: 8),
-          Expanded(
-            child: ChoiceButton(
-              label: r.label,
-              icon: r.icon,
-              color: _ratingColor(context, r),
-              selected: rating == r,
-              compact: true,
-              onTap: () => onRate(r),
-            ),
+    final color = done ? _ratingColor(context, rating!) : t.inkMuted;
+    final picker = Container(
+      width: 160,
+      height: 44,
+      padding: const EdgeInsets.only(left: 12, right: 6),
+      decoration: BoxDecoration(
+        color: done ? color.withValues(alpha: 0.08) : context.scheme.surface,
+        border: Border.all(color: done ? color : t.line, width: 1.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<Rating>(
+          value: rating,
+          isExpanded: true,
+          borderRadius: BorderRadius.circular(12),
+          icon: Icon(Icons.keyboard_arrow_down, color: color),
+          hint: Text(
+            S.choose,
+            style: TextStyle(fontSize: 14, color: t.inkMuted, fontWeight: FontWeight.w600),
           ),
-        ],
-      ],
+          selectedItemBuilder: (context) => [
+            for (final r in Rating.values)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  r.label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: _ratingColor(context, r),
+                  ),
+                ),
+              ),
+          ],
+          items: [
+            for (final r in Rating.values)
+              DropdownMenuItem(
+                value: r,
+                child: Row(
+                  children: [
+                    Icon(r.icon, size: 18, color: _ratingColor(context, r)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        r.label,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: _ratingColor(context, r),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+          onChanged: (r) {
+            if (r != null) onRate(r);
+          },
+        ),
+      ),
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-      child: LayoutBuilder(
-        builder: (context, c) {
-          if (c.maxWidth >= 520) {
-            return Row(
-              children: [
-                Expanded(child: title),
-                const SizedBox(width: 16),
-                SizedBox(width: 330, child: choices),
-              ],
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [title, const SizedBox(height: 10), choices],
-          );
-        },
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+      child: Row(
+        children: [
+          Expanded(child: title),
+          const SizedBox(width: 12),
+          picker,
+        ],
       ),
     );
   }

@@ -24,7 +24,7 @@ class HomePage extends ConsumerWidget {
 
     final attentionCard = AttentionCard(
       items: attentionItems(activities, today),
-      onOpen: (id) => context.push('/fiche/$id'),
+      onOpen: (id) => context.push('/action/$id'),
     );
     final progress = ProgressCard(done: summary.done, planned: summary.planned);
     final categories = CategoryPanel(stats: stats);

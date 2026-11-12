@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/demo_data.dart';
 import '../../domain/activity.dart';
 import '../../domain/control.dart';
+import '../../domain/participant.dart';
+import '../../domain/visit_progress.dart';
 import '../../domain/visit_type.dart';
 
 String controlKey(String activityId, String participantId) => '$activityId/$participantId';
@@ -67,4 +69,43 @@ final conformityNotesProvider = Provider.family<List<VisitNotes>, String>((ref, 
   }
   notes.sort((x, y) => x.date.compareTo(y.date));
   return notes;
+});
+
+/// Visites dont le rapport est fait. Provisoire (memoire) tant que l'ecran du
+/// rapport n'existe pas.
+class ReportsNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+
+  void markDone(String activityId) => state = {...state, activityId};
+}
+
+final reportsProvider = NotifierProvider<ReportsNotifier, Set<String>>(ReportsNotifier.new);
+
+/// Avancement d'une visite : presence (tous les participants pointes), puis
+/// controle (tous les presents evalues), puis rapport.
+final visitProgressProvider = Provider.family<VisitProgress, String>((ref, activityId) {
+  final people = ref.watch(participantsProvider(activityId));
+  final controls = ref.watch(controlsProvider);
+  final activity = ref.watch(activitiesProvider).where((a) => a.id == activityId).firstOrNull;
+  final conformity = activity?.visitType == VisitType.conformity;
+  final hasControl = activity?.meetingType?.hasControl ?? true;
+
+  ParticipantControl of(Participant p) =>
+      controls[controlKey(activityId, p.id)] ?? const ParticipantControl();
+
+  final attendance = people.isNotEmpty && people.every((p) => of(p).attendance != null);
+  final present = [
+    for (final p in people)
+      if (of(p).attendance == Attendance.present) of(p),
+  ];
+  final control = attendance &&
+      present.isNotEmpty &&
+      present.every((c) => conformity ? c.isConformityComplete : c.isComplete);
+  return VisitProgress(
+    attendance: attendance,
+    control: control,
+    hasControl: hasControl,
+    report: ref.watch(reportsProvider).contains(activityId),
+  );
 });

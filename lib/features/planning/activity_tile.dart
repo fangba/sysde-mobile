@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/strings.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/sys_widgets.dart';
 import '../../domain/activity.dart';
@@ -13,25 +14,30 @@ class ActivityTile extends StatelessWidget {
     required this.activity,
     required this.onTap,
     this.selected = false,
+    this.late = false,
   });
 
   final Activity activity;
   final VoidCallback onTap;
   final bool selected;
 
+  /// Non realisee et prevue avant aujourd'hui : « En retard ».
+  final bool late;
+
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
     final color = activity.category.color(t);
-    final statusColor = switch (activity.status) {
-      ActivityStatus.todo => context.scheme.primary,
-      ActivityStatus.inProgress => context.scheme.primary,
-      ActivityStatus.done => t.okFg,
-    };
+    final done = activity.status == ActivityStatus.done;
+    final (statusLabel, statusColor) = done
+        ? (activity.status.label, t.okFg)
+        : late
+            ? (S.lateLabel, t.dangerFg)
+            : (activity.status.label, t.inkMuted);
     return Semantics(
       button: true,
       selected: selected,
-      label: '${activity.title}, ${activity.place}, ${activity.status.label}',
+      label: '${activity.title}, ${activity.place}, $statusLabel',
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,
@@ -69,7 +75,7 @@ class ActivityTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  activity.status.label,
+                  statusLabel,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,

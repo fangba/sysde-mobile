@@ -25,7 +25,6 @@ class Activity {
     this.village,
     this.subjectName,
     this.rank,
-    this.endDate,
   });
 
   final String id;
@@ -58,12 +57,21 @@ class Activity {
   final String? lot;
   final String? subjectName;
   final int? rank;
-  final DateTime? endDate;
 
-  /// Derniere journee a afficher. Regle metier : une visite de plantation se
-  /// fait en 1 jour, donc pas de date de fin ; formation et rencontre
-  /// peuvent s'etendre sur plusieurs jours.
-  DateTime? get lastDay => category == ActivityCategory.visit ? null : endDate;
+  /// Duree en jours (regle metier) : formation initiale 20 jours, recyclage
+  /// des saigneurs 3 jours ; tout le reste (perfectionnement, suivi, visites,
+  /// rencontres) se fait en 1 jour.
+  int get durationDays => switch (trainingType) {
+        TrainingType.initial => 20,
+        TrainingType.recycling => 3,
+        _ => 1,
+      };
+
+  /// Derniere journee, date de debut comprise dans la duree ; null pour une
+  /// activite d'un seul jour (pas de date de fin a afficher).
+  DateTime? get lastDay => durationDays > 1
+      ? DateTime(date.year, date.month, date.day + durationDays - 1)
+      : null;
 }
 
 class MonthSummary {
@@ -73,17 +81,22 @@ class MonthSummary {
   final int done;
 }
 
-/// Activites d'une categorie sur le mois : en attente et terminees.
+/// Activites d'une categorie sur le mois : en attente (date pas encore
+/// arrivee), en retard (date passee, non realisees) et terminees.
 class CategoryStats {
-  const CategoryStats({required this.pending, required this.done});
+  const CategoryStats({required this.pending, this.late = 0, required this.done});
 
   final int pending;
+  final int late;
   final int done;
 
-  int get total => pending + done;
+  int get total => pending + late + done;
 
   /// Part (0 a 1) des activites en attente. 0 si la categorie est vide.
   double get pendingShare => total == 0 ? 0 : pending / total;
+
+  /// Part (0 a 1) des activites en retard. 0 si la categorie est vide.
+  double get lateShare => total == 0 ? 0 : late / total;
 
   /// Part (0 a 1) des activites terminees. 0 si la categorie est vide.
   double get doneShare => total == 0 ? 0 : done / total;

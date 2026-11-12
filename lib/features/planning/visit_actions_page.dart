@@ -5,16 +5,17 @@ import 'package:go_router/go_router.dart';
 import '../../core/format.dart';
 import '../../core/strings.dart';
 import '../../core/theme/tokens.dart';
-import '../../core/widgets/sys_widgets.dart';
 import '../../data/demo_data.dart';
 import '../../domain/activity.dart';
-import '../../domain/meeting_type.dart';
+import 'control_provider.dart';
 import 'photo_sheet_page.dart';
 import 'subject_labels.dart';
+import 'visit_steps.dart';
 
 /// Ce qui s'ouvre quand on touche une date dans une liste par sujet
-/// (visite, session de formation, animation de groupe) : meme style que la
-/// page precedente, avec deux grandes cartes Controle et Rapport.
+/// (visite, session de formation, animation de groupe) : les trois etapes
+/// Liste de presence, Controle et Rapport, chacune grisee tant que la
+/// precedente n'est pas faite.
 class VisitActionsPage extends ConsumerWidget {
   const VisitActionsPage({super.key, required this.activityId});
 
@@ -32,9 +33,9 @@ class VisitActionsPage extends ConsumerWidget {
     final a = matches.first;
     final (labels, backPath) = _context(a);
     final rank = a.rank ?? 1;
-    final subject = a.subjectName == null
-        ? a.title
-        : '${labels.prefix} ${a.subjectName!.toUpperCase()}'.trim();
+    // Activites regroupees en cartes de session : le titre reprend le texte de
+    // la carte (« FORMATION SEPTEMBRE », « RECYCLAGE », « CONFÉRENCE »...).
+    final subject = activityHeading(a);
     final section = a.section;
     final end = a.lastDay;
     final muted = TextStyle(fontSize: 13, color: context.tokens.inkMuted);
@@ -50,27 +51,38 @@ class VisitActionsPage extends ConsumerWidget {
       backPath: backPath,
       children: [
         if (section != null)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.place_outlined, size: 18, color: context.scheme.primary),
-              const SizedBox(width: 4),
-              Text(
-                '${labels.sectionField} $section',
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: context.tokens.okBg,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: context.scheme.primary.withValues(alpha: 0.35)),
               ),
-            ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.place, size: 20, color: context.scheme.primary),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${labels.sectionField} $section',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      color: context.scheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         Text(
           labels.item(rank),
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
           '${S.plannedOn} ${formatLongDate(a.date)}',
           textAlign: TextAlign.center,
@@ -83,31 +95,12 @@ class VisitActionsPage extends ConsumerWidget {
             style: muted,
           ),
         const SizedBox(height: 20),
-        Row(
-          children: [
-            Expanded(
-              // Groupe de vulgarisation : liste de presence, pas de controle.
-              child: a.meetingType == MeetingType.outreachGroup
-                  ? _ActionCard(
-                      icon: Icons.fact_check,
-                      label: S.actionAttendance,
-                      onTap: () => context.push('/action/${a.id}/presence'),
-                    )
-                  : _ActionCard(
-                      icon: Icons.school,
-                      label: S.actionControl,
-                      onTap: () => context.push('/action/${a.id}/controle'),
-                    ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _ActionCard(
-                icon: Icons.assignment_outlined,
-                label: S.actionReport,
-                onTap: () => _soon(context, S.actionReport),
-              ),
-            ),
-          ],
+        VisitSteps(
+          progress: ref.watch(visitProgressProvider(a.id)),
+          onAttendance: () => context.push('/action/${a.id}/presence'),
+          onControl: () => context.push('/action/${a.id}/controle'),
+          onReport: () => _soon(context, S.actionReport),
+          onLocked: (reason) => _notice(context, reason),
         ),
       ],
     );
@@ -126,6 +119,12 @@ class VisitActionsPage extends ConsumerWidget {
     return (visitLabels, '/activite');
   }
 
+  static void _notice(BuildContext context, String text) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(text)));
+  }
+
   static void _soon(BuildContext context, String what) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -133,51 +132,16 @@ class VisitActionsPage extends ConsumerWidget {
   }
 }
 
-class _ActionCard extends StatelessWidget {
-  const _ActionCard({required this.icon, required this.label, required this.onTap});
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(12);
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Semantics(
-        button: true,
-        label: label,
-        child: Material(
-          color: Colors.transparent,
-          elevation: 2,
-          borderRadius: radius,
-          child: Ink(
-            decoration: brandGradient(context, radius: radius),
-            child: InkWell(
-              borderRadius: radius,
-              onTap: onTap,
-              child: ExcludeSemantics(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, size: 56, color: Colors.white),
-                    const SizedBox(height: 12),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+/// Intitule en majuscules d'une activite : le texte de sa carte pour une
+/// session (« FORMATION SEPTEMBRE », « RECYCLAGE »...), sinon le sujet
+/// (« PLANTATION YAO KOUASSI », « GROUPE ESPOIR »).
+String activityHeading(Activity a) {
+  final (labels, _) = VisitActionsPage._context(a);
+  if (labels.sessionCards) {
+    return (labels.yearlySessionName ?? formatSessionName(a.date, word: labels.monthCardWord))
+        .toUpperCase();
   }
+  return a.subjectName == null
+      ? a.title
+      : '${labels.prefix} ${a.subjectName!.toUpperCase()}'.trim();
 }

@@ -16,8 +16,8 @@ final todayProvider = Provider<DateTime>((ref) => DateTime(2026, 10, 27));
 final categoryStatsProvider = Provider<Map<ActivityCategory, CategoryStats>>(
   (ref) => const {
     ActivityCategory.training: CategoryStats(pending: 0, done: 2),
-    ActivityCategory.meeting: CategoryStats(pending: 1, done: 3),
-    ActivityCategory.visit: CategoryStats(pending: 3, done: 9),
+    ActivityCategory.meeting: CategoryStats(pending: 0, late: 1, done: 3),
+    ActivityCategory.visit: CategoryStats(pending: 2, late: 1, done: 9),
   },
 );
 
@@ -44,7 +44,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Ahizi Aka Mathieu',
       rank: 2,
-      endDate: DateTime(2026, 11, 3),
     ),
     Activity(
       id: 'a2',
@@ -58,7 +57,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Kouadio Yao',
       rank: 1,
-      endDate: DateTime(2026, 11, 2),
     ),
     Activity(
       id: 'a3',
@@ -72,7 +70,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 2,
-      endDate: DateTime(2026, 10, 27),
     ),
     Activity(
       id: 'a4',
@@ -86,7 +83,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Yaokro',
       subjectName: 'Konan Brou',
       rank: 1,
-      endDate: DateTime(2026, 10, 30),
     ),
     Activity(
       id: 'a5',
@@ -100,7 +96,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Traoré Issa',
       rank: 1,
-      endDate: DateTime(2026, 11, 4),
     ),
     Activity(
       id: 'a6',
@@ -114,7 +109,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Kouamé Jean',
       rank: 2,
-      endDate: DateTime(2026, 11, 2),
     ),
     Activity(
       id: 'a7',
@@ -128,7 +122,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Yaokro',
       subjectName: 'Koffi Adjoua',
       rank: 1,
-      endDate: DateTime(2026, 10, 28),
     ),
     Activity(
       id: 'a8',
@@ -143,7 +136,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Zadi Gnagne',
       rank: 1,
-      endDate: DateTime(2026, 10, 27),
     ),
     Activity(
       id: 'a9',
@@ -157,7 +149,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Brou Akissi',
       rank: 1,
-      endDate: DateTime(2026, 10, 22),
     ),
     Activity(
       id: 'a33',
@@ -171,7 +162,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Brou Akissi',
       rank: 1,
-      endDate: DateTime(2026, 12, 2),
     ),
     Activity(
       id: 'a34',
@@ -185,7 +175,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Brou Akissi',
       rank: 2,
-      endDate: DateTime(2026, 12, 9),
     ),
     Activity(
       id: 'a35',
@@ -199,7 +188,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Brou Akissi',
       rank: 3,
-      endDate: DateTime(2026, 12, 16),
     ),
     Activity(
       id: 'a10',
@@ -213,7 +201,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Yaokro',
       subjectName: 'Yao Marie',
       rank: 1,
-      endDate: DateTime(2026, 11, 5),
     ),
     Activity(
       id: 'a15',
@@ -227,7 +214,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Ahizi Aka Mathieu',
       rank: 1,
-      endDate: DateTime(2026, 10, 17),
     ),
     Activity(
       id: 'a16',
@@ -241,7 +227,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Yaokro',
       subjectName: 'Bamba Seydou',
       rank: 1,
-      endDate: DateTime(2026, 11, 5),
     ),
     Activity(
       id: 'a17',
@@ -255,7 +240,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Diallo Mariam',
       rank: 1,
-      endDate: DateTime(2026, 11, 6),
     ),
     Activity(
       id: 'a18',
@@ -269,7 +253,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Yaokro',
       subjectName: 'Ehui Marcel',
       rank: 1,
-      endDate: DateTime(2026, 10, 20),
     ),
     Activity(
       id: 'a19',
@@ -283,7 +266,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Kouamé Jean',
       rank: 1,
-      endDate: DateTime(2026, 9, 14),
     ),
     Activity(
       id: 'a20',
@@ -297,7 +279,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 1,
-      endDate: DateTime(2026, 10, 13),
     ),
     Activity(
       id: 'a21',
@@ -311,7 +292,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 3,
-      endDate: DateTime(2026, 11, 17),
     ),
     Activity(
       id: 'a22',
@@ -325,7 +305,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 4,
-      endDate: DateTime(2026, 12, 15),
     ),
     Activity(
       id: 'a11',
@@ -339,7 +318,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Yaokro',
       subjectName: 'Yao Kouassi',
       rank: 1,
-      endDate: DateTime(2026, 10, 25),
     ),
     Activity(
       id: 'a12',
@@ -353,7 +331,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Tano Amenan',
       rank: 1,
-      endDate: DateTime(2026, 11, 12),
     ),
     Activity(
       id: 'a13',
@@ -367,7 +344,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Groupe Union',
       rank: 1,
-      endDate: DateTime(2026, 10, 19),
     ),
     Activity(
       id: 'a23',
@@ -381,7 +357,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Groupe Union',
       rank: 2,
-      endDate: DateTime(2026, 11, 23),
     ),
     Activity(
       id: 'a24',
@@ -395,7 +370,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Groupe Union',
       rank: 3,
-      endDate: DateTime(2026, 12, 7),
     ),
     Activity(
       id: 'a25',
@@ -409,7 +383,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Groupe Union',
       rank: 4,
-      endDate: DateTime(2026, 12, 21),
     ),
     Activity(
       id: 'a26',
@@ -423,7 +396,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 2,
-      endDate: DateTime(2026, 12, 4),
     ),
     Activity(
       id: 'a27',
@@ -437,7 +409,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 3,
-      endDate: DateTime(2026, 12, 11),
     ),
     Activity(
       id: 'a28',
@@ -451,7 +422,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 4,
-      endDate: DateTime(2026, 12, 18),
     ),
     Activity(
       id: 'a14',
@@ -465,7 +435,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Groupe Espoir',
       rank: 1,
-      endDate: DateTime(2026, 11, 14),
     ),
     Activity(
       id: 'pc1',
@@ -480,7 +449,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Siporex',
       subjectName: 'Koffi Awa',
       rank: 1,
-      endDate: DateTime(2026, 12, 9),
     ),
     Activity(
       id: 'pc2',
@@ -495,7 +463,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Bonoua',
       subjectName: 'Tano Paul',
       rank: 1,
-      endDate: DateTime(2026, 12, 10),
     ),
     Activity(
       id: 'pc3',
@@ -510,7 +477,6 @@ final activitiesProvider = Provider<List<Activity>>(
       village: 'Yaokro',
       subjectName: 'Kouassi Rose',
       rank: 1,
-      endDate: DateTime(2026, 12, 11),
     ),
   ],
 );
@@ -545,6 +511,30 @@ final participantsProvider = Provider.family<List<Participant>, String>((ref, ac
       Participant(id: 'g4', name: 'TOURE Mamadou', role: ParticipantRole.planter, phone: '78-54-09-12'),
       Participant(id: 'g5', name: 'BROU Akissi', role: ParticipantRole.planter, phone: '78-71-66-30'),
       Participant(id: 'g6', name: 'N DRI Jean-Marc', role: ParticipantRole.planter, phone: '78-45-18-92'),
+    ];
+  }
+  // Formations : les saigneurs convoques.
+  if (a.category == ActivityCategory.training) {
+    return const [
+      Participant(id: 's1', name: 'KOUAME Jean', role: ParticipantRole.tapper, phone: '07-48-12-35'),
+      Participant(id: 's2', name: 'TRAORE Issa', role: ParticipantRole.tapper, phone: '07-59-30-71'),
+      Participant(id: 's3', name: 'EHUI Marcel', role: ParticipantRole.tapper, phone: '05-44-87-20'),
+      Participant(id: 's4', name: 'N GUESSAN Valentin', role: ParticipantRole.tapper, phone: '78-85-55-58'),
+      Participant(id: 's5', name: 'TANOH YVES', role: ParticipantRole.tapper, phone: '78-96-36-96'),
+      Participant(id: 's6', name: 'ZADI Gnagne', role: ParticipantRole.tapper, phone: '07-21-64-09'),
+      Participant(id: 's7', name: 'AKA Serge', role: ParticipantRole.tapper, phone: '05-63-18-47'),
+      Participant(id: 's8', name: 'DJE Patrice', role: ParticipantRole.tapper, phone: '07-90-25-83'),
+    ];
+  }
+  // Autres rencontres (conference, voyage d'etude, foire) : planteurs et saigneurs.
+  if (a.category == ActivityCategory.meeting) {
+    return const [
+      Participant(id: 'm1', name: 'KOUAME Lisette', role: ParticipantRole.planter, phone: '78-98-89-98'),
+      Participant(id: 'm2', name: 'YAO Konan', role: ParticipantRole.planter, phone: '78-33-21-87'),
+      Participant(id: 'm3', name: 'BROU Akissi', role: ParticipantRole.planter, phone: '78-71-66-30'),
+      Participant(id: 'm4', name: 'TOURE Mamadou', role: ParticipantRole.planter, phone: '78-54-09-12'),
+      Participant(id: 'm5', name: 'N GUESSAN Valentin', role: ParticipantRole.tapper, phone: '78-85-55-58'),
+      Participant(id: 'm6', name: 'TANOH YVES', role: ParticipantRole.tapper, phone: '78-96-36-96'),
     ];
   }
   if (a.category != ActivityCategory.visit) return const [];

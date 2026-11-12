@@ -167,9 +167,9 @@ abstract final class S {
   static const catMeetingPlural = 'Rencontres';
   static const catVisitPlural = 'Visites';
 
-  static const statusTodo = 'À faire';
+  static const statusTodo = 'En attente';
   static const statusInProgress = 'En cours';
-  static const statusDone = 'Réalisée';
+  static const statusDone = 'Terminée';
   static const reportUpToDate = 'À jour';
   static const reportSlightDelay = 'Léger retard';
   static const reportLate = 'En retard';
@@ -184,6 +184,7 @@ abstract final class S {
   static const notProcessed = 'NON TRAITÉES';
   static const processed = 'TRAITÉES';
   static const pendingUpper = 'EN ATTENTE';
+  static const lateUpper = 'EN RETARD';
   static const finishedUpper = 'TERMINÉES';
   static const toHandle = 'Tâches du jour';
   static const nothingToHandle = "Aucune tâche en retard ni prévue aujourd'hui.";
@@ -209,6 +210,11 @@ abstract final class S {
   static const toolUndo = 'Annuler le dernier point';
   static const toolSave = 'Enregistrer';
   static const toolLayers = 'Fond de carte';
+  static const baseMapTitle = 'FOND DE CARTE';
+  static const toolMapLayers = 'Couches';
+  static const layerPlantations = 'Plantations';
+  static const layerSector = 'Secteur';
+  static const layerLot = 'Lot';
   static const toolLocate = 'Ma position';
   static const planningTitle = 'Planning';
   static String planningYear(int year) => 'Année $year';
@@ -230,8 +236,22 @@ abstract final class S {
   static String pageOf(int page, int count) => 'Page $page / $count';
   static const endDate = 'Date fin';
   static const actionControl = 'Contrôle';
+  static const stepAttendanceDesc = 'Pointez les présents et les absents';
+  static const stepControlDesc = 'Évaluez les participants présents';
+  static const stepReportDesc = 'Rédigez le rapport de la visite';
+  static const stepLockedAttendance = 'Faites d\'abord la liste de présence';
+  static const stepLockedControl = 'Terminez d\'abord le contrôle';
+  static const stepDone = 'Terminée';
+  static const stepTodo = 'À faire';
+  static String stepsProgress(int n, [int total = 3]) => '$n sur $total étapes terminées';
+  static String evaluatedOf(int done, int total) =>
+      '$done sur $total évalué${done > 1 ? 's' : ''}';
+  static const presenceFirst = 'Faites d\'abord la liste de présence.';
   static const actionReport = 'Rapport';
   static const actionAttendance = 'Liste de présence';
+  static String presentOf(int n, int total) =>
+      '$n présent${n > 1 ? 's' : ''} sur $total';
+  static const choose = 'Choisir';
   static const markAllPresent = 'Tout marquer présent';
   static const saveAttendance = 'Enregistrer la liste';
   static const attendanceSaved = 'Liste de présence enregistrée sur l\'appareil.';

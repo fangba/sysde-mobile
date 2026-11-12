@@ -10,6 +10,10 @@ enum MeetingType {
   /// Segment d'URL : `/activite/rencontre/slug`.
   final String slug;
 
+  /// Vulgarisation, conference et
+  /// voyage d'etude se font sans controle (presence puis rapport).
+  bool get hasControl => this == MeetingType.fair;
+
   static MeetingType? fromSlug(String? slug) {
     for (final t in values) {
       if (t.slug == slug) return t;
